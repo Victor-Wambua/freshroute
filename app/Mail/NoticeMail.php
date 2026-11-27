@@ -19,7 +19,7 @@ class NoticeMail extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: '[FreshRoute] '.strip_tags(__('notice.'.$this->type, $this->params)));
+        return new Envelope(subject: '[FreshRoute] '.strip_tags(\App\Support\NoticeText::render($this->type, $this->params, $this->locale)));
     }
 
     public function content(): Content

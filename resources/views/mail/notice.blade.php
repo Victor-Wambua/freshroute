@@ -1,4 +1,4 @@
-{{ __('notice.'.$type, $params) }}
+{{ \App\Support\NoticeText::render($type, $params, app()->getLocale()) }}
 
 @if($url){{ url($url) }}
 @endif

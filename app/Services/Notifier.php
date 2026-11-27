@@ -34,7 +34,7 @@ class Notifier
                 Mail::to($user->email)->queue(new NoticeMail($type, $params, $url, $user->locale ?: 'en'));
             }
             if (config('freshroute.sms_enabled') && $user->prefers('sms') && $user->phone) {
-                $this->sms->send($user->id, $user->phone, __('notice.'.$type, $params, $user->locale ?: 'en'));
+                $this->sms->send($user->id, $user->phone, \App\Support\NoticeText::render($type, $params, $user->locale ?: 'en'));
             }
             $n++;
         }
