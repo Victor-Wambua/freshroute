@@ -1,0 +1,1 @@
+Run from this folder: `npm install`; `node serve.mjs ../design 4360 &`; then `node tok2json.mjs`, `node contrast.mjs`, `node build-wireframes.mjs`, `node shots.mjs`, `node clickthrough.mjs`. Uses the cached Chromium under ~/Library/Caches/ms-playwright. Stop the server afterwards.
