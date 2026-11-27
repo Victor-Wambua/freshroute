@@ -1,0 +1,58 @@
+import fs from 'fs';import { chromium } from 'playwright';
+const CSS=`*{box-sizing:border-box}body{margin:0;padding:28px;font:14px/1.4 Arial,sans-serif;background:#eee;color:#222}h1{font-size:22px;margin:0 0 4px}.sub{color:#555;margin-bottom:20px;max-width:900px}
+.wrap{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.fig{display:flex;flex-direction:column;gap:6px}.cap{font-weight:700}
+.phone{width:300px;background:#fff;border:3px solid #444;border-radius:26px;padding:12px;min-height:560px;display:flex;flex-direction:column;gap:8px}
+.desk{width:640px;background:#fff;border:3px solid #444;border-radius:8px;padding:0;min-height:380px;display:grid;grid-template-columns:130px 1fr}.desk .sb{background:#ddd;border-right:2px solid #999;padding:10px;display:flex;flex-direction:column;gap:6px}.desk .mn{padding:12px;display:flex;flex-direction:column;gap:8px}
+.b{border:2px solid #777;border-radius:8px;padding:8px 10px;background:#f6f6f6;position:relative}.h{font-weight:700;font-size:16px}.btn{background:#777;color:#fff;text-align:center;border-radius:10px;padding:14px;font-weight:700}.btn.o{background:#fff;color:#444;border:2px solid #777}.inp{border:2px solid #777;border-radius:8px;padding:11px;background:#fff;color:#777}
+.tb{display:flex;justify-content:space-around;border-top:2px solid #777;padding-top:8px;margin-top:auto;font-size:11px}.tb span{text-align:center}.tb i{display:block;width:22px;height:22px;border-radius:50%;background:#aaa;margin:0 auto 2px}
+.row{display:flex;gap:6px;position:relative}.row>*{flex:1}.chip{border:2px solid #777;border-radius:20px;padding:6px 10px;font-size:12px;background:#fff}.chip.on{background:#777;color:#fff}.b-dummy{}.dim{color:#777;font-size:12px}
+.n{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;background:#222;color:#fff;font:700 12px/22px Arial;text-align:center}
+.notes{max-width:900px;margin-top:22px;background:#fff;border:2px dashed #888;padding:12px 18px}.notes li{margin:4px 0}.lab{position:absolute;top:-9px;left:10px;background:#eee;padding:0 4px;font-size:10px;color:#555}
+.sk{height:44px;background:#ddd;border-radius:8px}.bar{height:14px;background:#aaa;border-radius:7px}`;
+const el=(s)=>{const [k,...r]=s.split('|');const t=r.join('|');const m=t.match(/@(\d+)$/);const n=m?`<span class="n">${m[1]}</span>`:'';const x=t.replace(/@\d+$/,'');
+ return {H:`<div class="h">${x}${n}</div>`,B:`<div class="btn">${x}${n}</div>`,O:`<div class="btn o">${x}${n}</div>`,I:`<div class="inp">${x}${n}</div>`,C:`<div class="b">${x}${n}</div>`,D:`<div class="dim">${x}${n}</div>`,R:`<div class="row">${x.split(',').map(c=>`<div class="chip ${c.startsWith('*')?'on':''}">${c.replace('*','')}</div>`).join('')}${n}</div>`,S:`<div class="sk"></div>`,BAR:`<div class="bar" style="width:${x}%"></div>`,T:`<div class="tb">${x.split(',').map(a=>`<span><i></i>${a}</span>`).join('')}</div>`}[k]||`<div>${s}</div>`};
+const phone=(cap,items)=>`<div class="fig"><div class="cap">${cap}</div><div class="phone">${items.map(el).join('')}</div></div>`;
+const desk=(cap,nav,items)=>`<div class="fig"><div class="cap">${cap}</div><div class="desk"><div class="sb">${nav.map(n=>`<div class="b">${n}</div>`).join('')}</div><div class="mn">${items.map(el).join('')}</div></div></div>`;
+const page=(file,title,sub,figs,notes)=>({file,html:`<!doctype html><meta charset=utf-8><title>${title}</title><style>${CSS}</style><h1>${title}</h1><div class="sub">${sub} Low-fidelity grayscale wireframe. Annotation numbers refer to the notes below. All content is placeholder.</div><div class="wrap">${figs.join('')}</div><div class="notes"><b>Annotations</b><ol>${notes.map(n=>`<li>${n}</li>`).join('')}</ol></div>`});
+const FN=['Home','My produce','Harvest','Losses','Enquiries','Prices'];
+const pages=[
+page('01-auth-onboarding','1. Auth and onboarding','Language first, phone + code for farmers, email + password + TOTP for admins.',[
+ phone('Language + phone (mobile)',['H|Karibu / Welcome','D|Choose language','R|*Kiswahili,English','H|Phone number','I|07xx xxx xxx@1','B|Send 6-digit code@2','D|No password for farmers','T|·,·,·']),
+ phone('Role + farm profile (mobile)',['H|I am a...','C|Farmer (icon)','C|Buyer (icon)','C|Storage / transport (icon)','C|Coop admin (icon)','H|Farm','I|County / ward (list)@3','I|Acres, bags per harvest','B|Continue']),
+ desk('Coop admin sign-in (desktop)',['Logo'],['H|Cooperative sign-in','I|Email','I|Password','I|Authenticator code (TOTP)@4','B|Sign in','D|Forgot password / invite link'])],
+ ['Phone entry accepts local format; code is simulated in prototype.','Code step shows a 6-box input with resend after 60 s.','County and ward from a list, never free text, so listings can be filtered later.','TOTP required for privileged roles (coop admin, provider admin).']),
+page('02-dashboard-navigation','2. Dashboards and navigation','Role-based home screens; bottom tab bar on mobile, side nav on desktop.',[
+ phone('Farmer home (mobile)',['B|+ Sell: new listing in 4 taps@1','R|Harvest 6 days,Enquiries 1 new','R|Price KES 54/kg [Official],Losses 4 bags','H|My produce','C|Listing card: bags, price, grade, status','T|Home,Sell,Harvest,Losses,More@2']),
+ desk('Buyer market (desktop)',['Market','Saved','Enquiries','Prices'],['R|Search,Location,Min bags,Sort','R|*All,Grade A,Grade B','C|Listing | price | bags | harvest | [Save] [Compare]','C|Listing | price | bags | harvest | [Save] [Compare]@3']),
+ desk('Coop overview (desktop)',['Overview','Members','Reports','Prices','Alerts'],['R|Members,Bags listed,Open enquiries,Loss %','R|Supply by week (bars),Loss by stage (bars)@4','BAR|80','BAR|45'])],
+ ['One primary action per role is the biggest control on the home screen.','Bottom tab bar: max 5 items, 64 px tall; the middle action is raised for farmers. Everything else under More.','Buyer desktop uses a filter toolbar and two-column cards; compare allows up to 3.','Coop dashboard is read-mostly; charts always show a text value beside the bar.']),
+page('03-core-workflows','3. Core workflows','Create listing, enquire and track, request delivery.',[
+ phone('Listing: bags (1 of 5)',['D|Step 1 of 5 ▮▯▯▯▯','H|How many bags?','C|[-]   20   [+]@1','R|10,20,50,100','B|Continue']),
+ phone('Listing: date, quality, price',['H|Harvest date','R|Today,*+3 days,+1 week','H|Quality','R|*A,B,C@2','H|Price per bag','C|[-] 2,700 [+]','C|Official ref: KES 54/kg ≈ 2,700 / bag@3','B|Continue']),
+ phone('Check + publish',['H|Check and publish','C|Bags 50 · Date 30 Nov · Quality A · KES 2,700','C|Offline? "Saved to queue" notice@4','B|Publish']),
+ phone('Buyer enquiry + tracker',['H|Wanjiru Kamau · 120 bags','C|Details, storage need, area','B|Send enquiry@5','D|---','C|Sent ▸ Replied ▸ Agreed@6','D|No payment in FreshRoute'])],
+ ['Big stepper (72 px) with quick-pick chips; no keyboard needed for common values.','Quality chosen with three large buttons and plain-language hints; own description, not certified.','Official price reference is shown for orientation and labelled.','Offline publish stores locally and shows Queued on the listing.','Enquiry is not an order; quantity validated against listing.','Status steps: Sent, Replied, Agreed. Phone number released only after the farmer replies.']),
+page('04-data-entry-offline','4. Data entry and offline','Record losses, harvest calendar, offline queue.',[
+ phone('Record a loss',['H|Where did it happen?','R|Field,Handling,Transport,*Storage,Market@1','I|Bags lost','I|Reason (list)','B|Save@2']),
+ phone('Harvest calendar',['H|December 2026','C|Month grid; harvest days highlighted@3','C|3 Dec Plot A 120 bags','C|7 Dec Reminder: book transport','O|Add harvest date']),
+ phone('Offline state',['C|⚠ Offline · 2 waiting to send@4','H|My produce','C|Listing [Queued]','C|Loss record [Saved on phone]','B|Send now (when online)@5'])],
+ ['Stage as large single-select buttons mapped to the five value-chain stages.','Save works offline and says where the data is.','Harvest days are highlighted with colour AND a text list below.','Banner always visible while offline; count of waiting items.','Manual Send now plus automatic sync when connection returns; conflicts show a plain message.']),
+page('05-search-reports','5. Search, prices and reports','Filters and compare, official vs user-submitted prices, loss report.',[
+ phone('Prices: Official tab',['R|*Official,User-submitted@1','C|Banner: official source, date@2','C|Nakuru wholesale · KES 54/kg [Official] · collected 24 Nov · Source@3','C|Sparkline 8 weeks']),
+ phone('Prices: User-submitted tab',['R|Official,*User-submitted','C|⚠ Unverified, not an official average@4','C|Farmer, Kinangop · KES 2,600/bag [User-submitted]','O|Submit a price you saw']),
+ desk('Loss report (desktop)',['Overview','Members','Reports'],['H|Food-loss report · Irish potato','C|Bars by stage: field, handling, transport, storage, market@5','R|[Export CSV],[Member supply CSV],[Print / PDF]','D|Based on farmer self-reports']),
+ phone('Compare (dialog)',['H|Compare 3 listings','C|Table: price · bags · quality · harvest · place','B|Close'])],
+ ['Two separate tabs; the two kinds of price never share a list or an average.','Banner states source and licence status.','Every price shows source, collection date, and age warning after 7 days.','User-submitted tab carries an unverified warning.','Loss report labelled self-reported; export for every report.']),
+page('06-notifications-settings-states','6. Notifications, settings, admin and states','Alerts, own-data export, member admin, empty/loading/error/success.',[
+ phone('Alerts',['H|Alerts','C|● New enquiry: 60 bags (08:40)','C|Harvest reminder: Plot A in 6 days','C|Official Nakuru price rose to KES 54','H|How you get alerts','C|☑ In-app  ☑ Email  ☐ SMS (later)@1']),
+ phone('My data',['H|My data','B|Download my records (CSV)@2','O|Download JSON','O|Request account deletion','D|Phone shown to buyers only after you reply@3']),
+ desk('Members (desktop)',['Overview','Members'],['I|Search members','C|Name | Place | Bags | Listings | Loss % | Last active@4','C|row','C|row','O|Invite member']),
+ phone('States',['H|Empty','C|Icon + "Nothing here yet" + action@5','H|Loading','S|','S|','H|Error','C|Could not load. [Try again]@6','H|Success','C|Toast: Listing is live'])],
+ ['SMS shown disabled with reason: needs an SMS provider (outstanding).','Export of own records, per acceptance criteria.','Privacy by default.','Admin table: sortable headers, row-level actions, role-limited.','Empty states always offer the next action.','Errors say what happened and offer retry; never lose typed data.'])];
+fs.mkdirSync('../design/wireframes',{recursive:true});
+for(const p of pages)fs.writeFileSync(`../design/wireframes/${p.file}.html`,p.html);
+fs.writeFileSync('../design/wireframes/index.html',`<!doctype html><meta charset=utf-8><title>FreshRoute wireframes</title><style>body{font:16px Arial;padding:28px;background:#eee}a{display:block;margin:8px 0;color:#222}</style><h1>FreshRoute low-fidelity wireframes</h1>${pages.map(p=>`<a href="${p.file}.html">${p.file}</a>`).join('')}`);
+const home=process.env.HOME,exe=fs.readdirSync(home+'/Library/Caches/ms-playwright').filter(x=>x.startsWith('chromium-')).map(x=>`${home}/Library/Caches/ms-playwright/${x}/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`)[0];
+const b=await chromium.launch({executablePath:exe});const pg=await b.newPage({viewport:{width:1400,height:900}});
+for(const p of pages){await pg.goto('http://localhost:4360/wireframes/'+p.file+'.html');await pg.screenshot({path:`../design/wireframes/${p.file}.png`,fullPage:true})}
+await b.close();console.log('wf ok');

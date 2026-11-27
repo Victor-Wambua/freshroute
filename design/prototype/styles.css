@@ -107,3 +107,4 @@ dialog::backdrop{background:rgba(26,19,13,.6)}
 
 main:focus{outline:none}.brand span{white-space:nowrap}
 @media(max-width:480px){.top .brand span{display:none}.top{padding:8px}.bar-actions{gap:4px}.iconbtn{min-width:46px}}
+.b-neutral{color:var(--fr-ink);background:var(--fr-surface-2)}
