@@ -40,7 +40,7 @@ class CreateBuyerNeed
             'buyer_id' => $user->id, 'commodity_id' => Commodity::mvp()->id,
             'quantity_bags' => (int) $d['quantity_bags'], 'county' => $d['county'], 'needed_by' => $d['needed_by'],
             'max_price_minor' => isset($d['max_price_kes']) && $d['max_price_kes'] !== '' ? Money::toMinor($d['max_price_kes']) : null,
-            'min_grade' => $d['min_grade'],
+            'min_grade' => $d['min_grade'], 'status' => 'open',
             'origin' => $user->origin === 'synthetic' ? 'synthetic' : 'user_submitted',
         ]);
         Audit::log('need.created', $need, [], $user->id);

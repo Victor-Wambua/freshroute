@@ -51,7 +51,7 @@ class CreateDeliveryRequest
             'requester_id' => $user->id, 'transporter_profile_id' => $t->id, 'listing_id' => $listingId,
             'bags' => (int) $d['bags'], 'pickup_place' => $d['pickup_place'], 'dropoff_place' => $d['dropoff_place'], 'pickup_date' => $d['pickup_date'],
             'origin' => $user->origin === 'synthetic' ? 'synthetic' : 'user_submitted',
-        ]);
+        ])->refresh();
         Audit::log('delivery.requested', $r, [], $user->id);
         app(Notifier::class)->send($t->user, 'delivery_request', ['bags' => $r->bags, 'from' => $r->pickup_place, 'to' => $r->dropoff_place], route('deliveries.show', $r, false));
 

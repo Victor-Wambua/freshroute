@@ -15,6 +15,11 @@ class HarvestCalendarEntry extends Model
         return ['harvest_on' => 'date', 'reminded_at' => 'datetime'];
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function commodity(): BelongsTo
     {
         return $this->belongsTo(Commodity::class);

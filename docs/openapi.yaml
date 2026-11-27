@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: FreshRoute JSON API
+  version: 0.1.0
+  description: |
+    Small same-origin JSON API used by the PWA offline queue and a public official-price feed.
+    Authentication is the browser session cookie (no tokens are issued in this version).
+    State-changing calls need the `X-CSRF-TOKEN` header; get a fresh token from `GET /api/v1/session`.
+    Not production ready. Data in a demo deployment is synthetic and labelled via the `origin` field.
+servers:
+  - url: http://localhost:4361
+paths:
+  /api/v1/prices:
+    get:
+      summary: Official or published prices (never user-submitted)
+      description: Every row carries source, source URL, collection date, licence status and origin. Rows with origin `synthetic` are invented demonstration data.
+      parameters:
+        - { name: market, in: query, required: false, schema: { type: string } }
+      responses:
+        '200':
+          description: Price rows, newest first (max 200)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/OfficialPrice' } }
+                  notice: { type: string }
+  /api/v1/session:
+    get:
+      summary: Session state and a fresh CSRF token
+      security: [ { cookieAuth: [] } ]
+      responses:
+        '200':
+          description: Session info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated: { type: boolean }
+                  csrf: { type: string }
+                  role: { type: string, nullable: true }
+        '401': { description: Not signed in }
+  /api/v1/sync:
+    post:
+      summary: Apply records captured offline (idempotent)
+      description: |
+        Up to 50 operations per call. Each operation carries a client-generated UUID that is its idempotency key.
+        Re-sending an operation returns `duplicate` (or `rejected` with the original errors) and never creates a second record.
+        Dates are validated against `captured_at` (the day the record was captured), not the sync day; a future `captured_at` is ignored.
+      security: [ { cookieAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ops]
+              properties:
+                ops:
+                  type: array
+                  maxItems: 50
+                  items: { $ref: '#/components/schemas/SyncOp' }
+      responses:
+        '200':
+          description: Per-operation results, in order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results: { type: array, items: { $ref: '#/components/schemas/SyncResult' } }
+        '401': { description: Not signed in }
+        '419': { description: CSRF token missing or stale }
+        '422': { description: Malformed body or more than 50 operations }
+        '429': { description: Rate limited (30 per minute) }
+  /api/v1/listings:
+    get:
+      summary: Open produce listings (signed-in users)
+      security: [ { cookieAuth: [] } ]
+      responses:
+        '200':
+          description: Up to 100 open listings, soonest harvest first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/Listing' } }
+        '401': { description: Not signed in }
+components:
+  securitySchemes:
+    cookieAuth: { type: apiKey, in: cookie, name: freshroute-session }
+  schemas:
+    OfficialPrice:
+      type: object
+      properties:
+        market: { type: string }
+        price_type: { type: string, enum: [wholesale, retail, farmgate] }
+        unit: { type: string, example: 50 kg bag }
+        price_minor: { type: integer, description: KES cents }
+        currency: { type: string, example: KES }
+        collected_on: { type: string, format: date }
+        source: { type: string }
+        source_url: { type: string, format: uri }
+        licence_status: { type: string, enum: [open_licence, permission_granted, synthetic] }
+        origin: { type: string, enum: [officially_published, synthetic] }
+    Listing:
+      type: object
+      properties:
+        id: { type: integer }
+        quantity_bags: { type: integer }
+        harvest_date: { type: string, format: date }
+        county: { type: string }
+        place: { type: string }
+        quality_grade: { type: string, enum: [A, B, C], description: "Seller's own description, not certified" }
+        price_minor: { type: integer }
+        currency: { type: string }
+        origin: { type: string, enum: [user_submitted, synthetic] }
+        supplier: { type: string }
+    SyncOp:
+      type: object
+      required: [uuid, type, payload]
+      properties:
+        uuid: { type: string, format: uuid, description: Idempotency key }
+        type: { type: string, enum: [listing, enquiry, loss, lot, need, price] }
+        captured_at: { type: string, format: date-time }
+        payload: { type: object, description: Same fields as the matching web form }
+    SyncResult:
+      type: object
+      properties:
+        uuid: { type: string }
+        status: { type: string, enum: [created, duplicate, rejected] }
+        id: { type: integer, nullable: true }
+        errors: { type: object, nullable: true, additionalProperties: { type: array, items: { type: string } } }

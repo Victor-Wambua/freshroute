@@ -47,7 +47,7 @@ class CreateEnquiry
             'listing_id' => $listing->id, 'buyer_id' => $user->id,
             'quantity_bags' => (int) $d['quantity_bags'], 'message' => $d['message'] ?? null,
             'origin' => $user->origin === 'synthetic' ? 'synthetic' : 'user_submitted',
-        ]);
+        ])->refresh();
 
         Audit::log('enquiry.created', $e, ['listing' => $listing->id], $user->id);
         app(Notifier::class)->send($listing->user, 'new_enquiry', ['buyer' => $user->displayName(), 'bags' => $e->quantity_bags], route('enquiries.show', $e, false));
