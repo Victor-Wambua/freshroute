@@ -88,3 +88,11 @@ function makeCoop(array $attrs = []): Cooperative
 {
     return Cooperative::create($attrs + ['name' => 'Test Coop '.Str::random(4), 'county' => 'Nakuru']);
 }
+
+function listingPayload(array $over = []): array
+{
+    return $over + [
+        'quantity_bags' => 120, 'harvest_date' => today()->addDays(3)->toDateString(), 'quality_grade' => 'A', 'price_kes' => 2600,
+        'county' => 'Nyandarua', 'place' => 'Ol Kalou', 'variety' => 'Shangi', 'storage_requirements' => 'Cool and dry',
+    ];
+}

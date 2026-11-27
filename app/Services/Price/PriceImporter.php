@@ -31,7 +31,7 @@ class PriceImporter
             foreach ($feed->records() as $_) {
                 $read++;
             }
-            $batch->update(['rows_read' => $read, 'rows_rejected' => $read, 'errors' => [['line' => 0, 'error' => "Source licence status '{$source->licence_status}' does not permit import"]]]);
+            $batch->update(['rows_read' => $read, 'rows_imported' => 0, 'rows_rejected' => $read, 'errors' => [['line' => 0, 'error' => "Source licence status '{$source->licence_status}' does not permit import"]]]);
 
             return ['batch' => $batch, 'changes' => []];
         }
@@ -73,11 +73,16 @@ class PriceImporter
             $prev = OfficialPrice::where('commodity_id', $commodity->id)->where('market', $row['market'])->where('price_type', $row['price_type'])
                 ->where('collected_on', '<', $row['collected_on'])->orderByDesc('collected_on')->first();
 
-            $price = OfficialPrice::updateOrCreate(
-                ['commodity_id' => $commodity->id, 'market' => $row['market'], 'price_type' => $row['price_type'], 'collected_on' => $row['collected_on'], 'price_source_id' => $source->id],
-                ['import_batch_id' => $batch->id, 'county' => $row['county'] ?: null, 'unit' => $row['unit'], 'price_minor' => $row['price_minor'],
-                    'source_url' => $row['source_url'], 'licence_status' => $row['licence_status'], 'origin' => $source->origin, 'retrieved_at' => now()]
-            );
+            $values = ['import_batch_id' => $batch->id, 'county' => $row['county'] ?: null, 'unit' => $row['unit'], 'price_minor' => $row['price_minor'],
+                'source_url' => $row['source_url'], 'licence_status' => $row['licence_status'], 'origin' => $source->origin, 'retrieved_at' => now()];
+            // collected_on is stored as a datetime string, so match on the calendar date rather than the raw string.
+            $price = OfficialPrice::where('commodity_id', $commodity->id)->where('market', $row['market'])->where('price_type', $row['price_type'])
+                ->where('price_source_id', $source->id)->whereDate('collected_on', $row['collected_on'])->first();
+            if ($price) {
+                $price->update($values);
+            } else {
+                $price = OfficialPrice::create($values + ['commodity_id' => $commodity->id, 'market' => $row['market'], 'price_type' => $row['price_type'], 'collected_on' => $row['collected_on'], 'price_source_id' => $source->id]);
+            }
             $imported++;
             if ($prev && $price->wasRecentlyCreated) {
                 $pct = ($price->price_minor - $prev->price_minor) * 100 / $prev->price_minor;
