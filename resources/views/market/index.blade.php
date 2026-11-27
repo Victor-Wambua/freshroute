@@ -5,10 +5,13 @@
 <x-errors/>
 <form method="get" class="toolbar" role="search">
     <div><label for="q" class="sr">{{ __('ui.search') }}</label><input id="q" type="search" name="q" value="{{ $d['q'] ?? '' }}" placeholder="{{ __('ui.search_ph') }}"></div>
+    <button type="button" class="btn ghost sm filter-toggle" data-toggle="#more-filters" aria-expanded="false" aria-controls="more-filters">{{ __('ui.filter') }}</button>
+    <div class="more-filters @if(!empty($d['county']) || !empty($d['min_bags']) || !empty($d['grade']) || (($d['sort'] ?? 'harvest') !== 'harvest')) on @endif" id="more-filters">
     <div><label for="county" class="sr">{{ __('ui.county') }}</label><select id="county" name="county"><option value="">{{ __('ui.all_counties') }}</option>@foreach(config('freshroute.counties') as $c)<option @selected(($d['county'] ?? '') === $c)>{{ $c }}</option>@endforeach</select></div>
     <div><label for="min_bags" class="sr">{{ __('ui.min_bags') }}</label><input id="min_bags" type="number" min="1" name="min_bags" value="{{ $d['min_bags'] ?? '' }}" placeholder="{{ __('ui.min_bags') }}" inputmode="numeric"></div>
     <div><label for="sort" class="sr">{{ __('ui.sort') }}</label><select id="sort" name="sort">@foreach(['harvest','price_asc','price_desc','qty'] as $s)<option value="{{ $s }}" @selected(($d['sort'] ?? 'harvest') === $s)>{{ __('ui.sort_'.$s) }}</option>@endforeach</select></div>
     <fieldset style="border:0;padding:0;margin:0;grid-column:1/-1"><legend class="sr">{{ __('ui.grade') }}</legend><div class="chips">@foreach(['A','B','C'] as $g)<label class="chip" style="display:inline-flex;align-items:center;gap:8px;margin:0"><input type="checkbox" name="grade[]" value="{{ $g }}" @checked(in_array($g, $d['grade'] ?? []))> {{ __('ui.grade') }} {{ $g }}</label>@endforeach</div></fieldset>
+    </div>
     <button class="btn" type="submit">{{ __('ui.search') }}</button>
 </form>
 @if($ref)<p class="small muted"><x-origin :origin="$ref->origin"/> {{ __('ui.official_ref') }}: {{ \App\Support\Money::kes($ref->price_minor) }} ({{ $ref->market }}, {{ $ref->collected_on->toDateString() }})</p>@endif

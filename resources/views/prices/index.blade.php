@@ -24,8 +24,8 @@
         <div class="card" style="margin-bottom:16px"><h2>{{ __('ui.history_12w') }} - {{ $market }}</h2>
             <x-price-chart :series="$series->map(fn($p) => ['label' => $p->collected_on->format('j M'), 'value' => $p->price_minor])->all()" :title="__('ui.history_12w').' - '.$market"/></div>
         <h2>{{ __('ui.all_markets') }}</h2>
-        <div class="tablewrap"><table><thead><tr><th scope="col">{{ __('ui.market') }}</th><th scope="col" class="numcol">{{ __('ui.price') }}</th><th scope="col">{{ __('ui.collected') }}</th><th scope="col">{{ __('ui.source') }}</th><th scope="col">{{ __('ui.licence') }}</th></tr></thead><tbody>
-        @foreach($latest as $m => $p)<tr><th scope="row">{{ $m }}</th><td class="numcol">{{ \App\Support\Money::kes($p->price_minor) }}</td><td>{{ $p->collected_on->toDateString() }}</td><td>{{ $p->source->name }}</td><td>{{ __('ui.licence_'.$p->licence_status) }}</td></tr>@endforeach
+        <div class="tablewrap"><table><thead><tr><th scope="col">{{ __('ui.market') }}</th><th scope="col" class="numcol">{{ __('ui.price') }}</th><th scope="col">{{ __('ui.collected') }}</th><th scope="col" class="hide-sm">{{ __('ui.source') }}</th><th scope="col">{{ __('ui.licence') }}</th></tr></thead><tbody>
+        @foreach($latest as $m => $p)<tr><th scope="row">{{ $m }}</th><td class="numcol">{{ \App\Support\Money::kes($p->price_minor) }}</td><td>{{ $p->collected_on->toDateString() }}</td><td class="hide-sm">{{ $p->source->name }}</td><td>{{ __('ui.licence_'.$p->licence_status) }}</td></tr>@endforeach
         </tbody></table></div>
     @else
         <div class="empty card"><x-icon name="chart"/><p>{{ __('ui.no_official_prices') }}</p></div>
