@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\EnquiryStatus;
 use App\Enums\ListingStatus;
 use App\Enums\Role;
 use App\Models\Listing;

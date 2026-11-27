@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserPrice;
 use App\Support\Audit;
 use App\Support\Money;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 /** User-submitted market observation. Stored apart from official prices; never merged into official statistics. */
@@ -31,7 +32,7 @@ class CreateUserPrice
             return $p;
         }
         $p = UserPrice::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'user_id' => $user->id, 'commodity_id' => Commodity::mvp()->id, 'market' => $d['market'],
             'unit' => config('freshroute.unit.en'), 'price_minor' => Money::toMinor($d['price_kes']),
             'observed_on' => $d['observed_on'], 'note' => $d['note'] ?? null,

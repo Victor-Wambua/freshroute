@@ -8,6 +8,7 @@ use App\Models\Listing;
 use App\Models\User;
 use App\Services\Notifier;
 use App\Support\Audit;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CreateEnquiry
@@ -43,7 +44,7 @@ class CreateEnquiry
         }
 
         $e = Enquiry::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'listing_id' => $listing->id, 'buyer_id' => $user->id,
             'quantity_bags' => (int) $d['quantity_bags'], 'message' => $d['message'] ?? null,
             'origin' => $user->origin === 'synthetic' ? 'synthetic' : 'user_submitted',

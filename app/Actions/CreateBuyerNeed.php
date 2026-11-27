@@ -11,6 +11,7 @@ use App\Services\Notifier;
 use App\Support\Audit;
 use App\Support\Money;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class CreateBuyerNeed
@@ -36,7 +37,7 @@ class CreateBuyerNeed
             return $n;
         }
         $need = BuyerNeed::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'buyer_id' => $user->id, 'commodity_id' => Commodity::mvp()->id,
             'quantity_bags' => (int) $d['quantity_bags'], 'county' => $d['county'], 'needed_by' => $d['needed_by'],
             'max_price_minor' => isset($d['max_price_kes']) && $d['max_price_kes'] !== '' ? Money::toMinor($d['max_price_kes']) : null,

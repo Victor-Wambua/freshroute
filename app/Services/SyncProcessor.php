@@ -26,7 +26,7 @@ class SyncProcessor
 {
     public const TYPES = ['listing', 'enquiry', 'loss', 'lot', 'need', 'price'];
 
-    /** @param  list<array{uuid?: string, type?: string, captured_at?: string, payload?: array}>  $ops */
+    /** @param  array<int, mixed>  $ops each item should be {uuid, type, captured_at, payload}; malformed items are rejected individually */
     public function process(User $user, array $ops): array
     {
         $results = [];

@@ -9,6 +9,7 @@ use App\Models\TransporterProfile;
 use App\Models\User;
 use App\Services\Notifier;
 use App\Support\Audit;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CreateDeliveryRequest
@@ -47,7 +48,7 @@ class CreateDeliveryRequest
             $listingId = $l->id;
         }
         $r = DeliveryRequest::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'requester_id' => $user->id, 'transporter_profile_id' => $t->id, 'listing_id' => $listingId,
             'bags' => (int) $d['bags'], 'pickup_place' => $d['pickup_place'], 'dropoff_place' => $d['dropoff_place'], 'pickup_date' => $d['pickup_date'],
             'origin' => $user->origin === 'synthetic' ? 'synthetic' : 'user_submitted',

@@ -1,6 +1,12 @@
 <?php
 
 use App\Enums\Role;
+use App\Models\Listing;
+use App\Models\OfficialPrice;
+use App\Models\PriceSource;
+use App\Models\User;
+use Database\Seeders\SyntheticDataSeeder;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Yaml\Yaml;
 
@@ -25,8 +31,8 @@ it('documents every API route in docs/openapi.yaml and documents nothing that do
 });
 
 it('serves official prices publicly with source, licence and origin on every row, and no user data', function () {
-    $src = App\Models\PriceSource::create(['name' => 'Synthetic', 'url' => 'https://example.invalid/s', 'licence_status' => 'synthetic', 'origin' => 'synthetic']);
-    App\Models\OfficialPrice::create(['commodity_id' => commodity()->id, 'price_source_id' => $src->id, 'market' => 'Nakuru', 'unit' => '50 kg bag', 'price_minor' => 265000, 'collected_on' => today(), 'source_url' => 'https://example.invalid/s', 'licence_status' => 'synthetic', 'origin' => 'synthetic', 'retrieved_at' => now()]);
+    $src = PriceSource::create(['name' => 'Synthetic', 'url' => 'https://example.invalid/s', 'licence_status' => 'synthetic', 'origin' => 'synthetic']);
+    OfficialPrice::create(['commodity_id' => commodity()->id, 'price_source_id' => $src->id, 'market' => 'Nakuru', 'unit' => '50 kg bag', 'price_minor' => 265000, 'collected_on' => today(), 'source_url' => 'https://example.invalid/s', 'licence_status' => 'synthetic', 'origin' => 'synthetic', 'retrieved_at' => now()]);
     $j = $this->getJson('/api/v1/prices')->assertOk()->json();
     expect($j['data'][0])->toHaveKeys(['market', 'unit', 'price_minor', 'currency', 'collected_on', 'source', 'source_url', 'licence_status', 'origin'])->and($j['data'][0]['origin'])->toBe('synthetic');
 });
@@ -62,11 +68,11 @@ it('protects against SQL injection in search and sort parameters', function () {
     actingAsUser($b)->get("/market?q=' OR 1=1 --")->assertOk();
     actingAsUser($b)->get('/market?sort=price;DROP TABLE listings')->assertSessionHasErrors('sort');
     actingAsUser($b)->get('/market?county=Nakuru%27%20OR%201=1')->assertSessionHasErrors('county');
-    expect(App\Models\Listing::count())->toBe(1);
+    expect(Listing::count())->toBe(1);
 });
 
 it('has CSRF protection in the web middleware group (the 419 behaviour is verified end to end in Playwright)', function () {
-    $groups = app(Illuminate\Contracts\Http\Kernel::class)->getMiddlewareGroups()['web'];
+    $groups = app(Kernel::class)->getMiddlewareGroups()['web'];
     expect(collect($groups)->contains(fn ($m) => is_string($m) && str_contains($m, 'PreventRequestForgery')))->toBeTrue();
 });
 
@@ -76,14 +82,14 @@ it('registers the scheduled commands', function () {
 
 it('refuses to seed synthetic data in production', function () {
     app()->detectEnvironment(fn () => 'production');
-    expect(fn () => (new Database\Seeders\SyntheticDataSeeder)->run())->toThrow(RuntimeException::class);
+    expect(fn () => (new SyntheticDataSeeder)->run())->toThrow(RuntimeException::class);
 });
 
 it('the synthetic seeder is idempotent and labels everything synthetic', function () {
-    $this->seed(Database\Seeders\SyntheticDataSeeder::class);
-    $counts = [App\Models\User::count(), App\Models\Listing::count(), App\Models\OfficialPrice::count()];
-    $this->seed(Database\Seeders\SyntheticDataSeeder::class);
-    expect([App\Models\User::count(), App\Models\Listing::count(), App\Models\OfficialPrice::count()])->toBe($counts);
-    expect(App\Models\User::where('origin', '!=', 'synthetic')->count())->toBe(0)->and(App\Models\Listing::where('origin', '!=', 'synthetic')->count())->toBe(0)
-        ->and(App\Models\OfficialPrice::where('origin', '!=', 'synthetic')->count())->toBe(0)->and(App\Models\OfficialPrice::where('licence_status', '!=', 'synthetic')->count())->toBe(0);
+    $this->seed(SyntheticDataSeeder::class);
+    $counts = [User::count(), Listing::count(), OfficialPrice::count()];
+    $this->seed(SyntheticDataSeeder::class);
+    expect([User::count(), Listing::count(), OfficialPrice::count()])->toBe($counts);
+    expect(User::where('origin', '!=', 'synthetic')->count())->toBe(0)->and(Listing::where('origin', '!=', 'synthetic')->count())->toBe(0)
+        ->and(OfficialPrice::where('origin', '!=', 'synthetic')->count())->toBe(0)->and(OfficialPrice::where('licence_status', '!=', 'synthetic')->count())->toBe(0);
 });

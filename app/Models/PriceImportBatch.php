@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property array<mixed>|null $errors
+ */
 class PriceImportBatch extends Model
 {
     protected $guarded = ['id'];
@@ -15,6 +17,7 @@ class PriceImportBatch extends Model
         return ['errors' => 'array'];
     }
 
+    /** @return BelongsTo<PriceSource, $this> */
     public function source(): BelongsTo
     {
         return $this->belongsTo(PriceSource::class, 'price_source_id');

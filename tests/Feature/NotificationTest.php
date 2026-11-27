@@ -5,6 +5,7 @@ use App\Enums\Role;
 use App\Mail\NoticeMail;
 use App\Models\HarvestCalendarEntry;
 use App\Services\Notifier;
+use App\Services\SandboxSmsGateway;
 use App\Support\NoticeText;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,7 +37,7 @@ it('has SMS as a disabled sandbox: nothing is sent unless the flag is on, and ev
     config(['freshroute.sms_enabled' => true]);
     app(Notifier::class)->send($u, 'new_enquiry', ['buyer' => 'x', 'bags' => 1]);
     $row = DB::table('sms_outbox')->first();
-    expect($row->status)->toBe('sandbox_not_sent')->and(app(SmsGateway::class))->toBeInstanceOf(App\Services\SandboxSmsGateway::class);
+    expect($row->status)->toBe('sandbox_not_sent')->and(app(SmsGateway::class))->toBeInstanceOf(SandboxSmsGateway::class);
     // the preference form cannot switch SMS on
     actingAsUser($u)->post('/alerts/prefs', ['mail' => '1', 'database' => '1', 'sms' => '1']);
     expect($u->fresh()->notification_prefs['sms'])->toBeFalse();

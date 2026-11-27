@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\DeliveryRequest;
+use App\Models\Enquiry;
+use App\Models\TransporterProfile;
 use App\Models\User;
+use App\Models\UserPrice;
 use App\Support\Csv;
 
 /** Per-user export of everything the user created or that is stored about them. JSON (complete) and CSV (per dataset). */
@@ -28,13 +32,13 @@ class DataExporter
             'profile' => [collect($u->only(['id', 'name', 'email', 'phone', 'role', 'county', 'place', 'business_name', 'buyer_type', 'locale', 'origin', 'consent_at', 'created_at']))->map(fn ($v) => $v instanceof \BackedEnum ? $v->value : $v)->all()]
                 + ['farms' => $u->farms()->with('crops')->get()->toArray()],
             'listings' => $strip($u->listings()->get()),
-            'enquiries' => $strip($u->enquiries()->get()->concat(\App\Models\Enquiry::whereIn('listing_id', $u->listings()->select('id'))->get())->unique('id')),
+            'enquiries' => $strip($u->enquiries()->get()->concat(Enquiry::whereIn('listing_id', $u->listings()->select('id'))->get())->unique('id')),
             'losses' => $strip($u->lossEvents()->get()),
             'lots' => $strip($u->lots()->get()),
             'needs' => $strip($u->needs()->get()),
             'storage' => $strip($u->facilities()->get()),
-            'deliveries' => $strip(\App\Models\DeliveryRequest::where('requester_id', $u->id)->orWhereIn('transporter_profile_id', \App\Models\TransporterProfile::where('user_id', $u->id)->select('id'))->get()),
-            'prices' => $strip(\App\Models\UserPrice::where('user_id', $u->id)->get()),
+            'deliveries' => $strip(DeliveryRequest::where('requester_id', $u->id)->orWhereIn('transporter_profile_id', TransporterProfile::where('user_id', $u->id)->select('id'))->get()),
+            'prices' => $strip(UserPrice::where('user_id', $u->id)->get()),
             default => throw new \InvalidArgumentException('unknown dataset'),
         };
     }

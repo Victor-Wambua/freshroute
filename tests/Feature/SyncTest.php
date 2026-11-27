@@ -8,6 +8,7 @@ use App\Models\Listing;
 use App\Models\LossEvent;
 use App\Models\UserPrice;
 use App\Services\SyncProcessor;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 function op(string $type, array $payload, ?string $uuid = null, ?string $captured = null): array
 {
@@ -109,7 +110,7 @@ it('has a unique index backing idempotency at the database level', function () {
     $f = makeUser(Role::Farmer);
     $u = (string) Str::uuid();
     makeListing($f, ['client_uuid' => $u]);
-    expect(fn () => makeListing($f, ['client_uuid' => $u]))->toThrow(Illuminate\Database\UniqueConstraintViolationException::class);
+    expect(fn () => makeListing($f, ['client_uuid' => $u]))->toThrow(UniqueConstraintViolationException::class);
 });
 
 it('exposes a session endpoint with a fresh CSRF token for the queue to use', function () {

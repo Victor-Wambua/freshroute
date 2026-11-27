@@ -6,7 +6,6 @@ use App\Actions\CreateDeliveryRequest;
 use App\Enums\DeliveryStatus;
 use App\Enums\Role;
 use App\Models\DeliveryRequest;
-use App\Models\Listing;
 use App\Models\TransporterProfile;
 use App\Services\Transitions;
 use App\Support\Audit;

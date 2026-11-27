@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Support\NoticeText;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -19,7 +20,7 @@ class NoticeMail extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: '[FreshRoute] '.strip_tags(\App\Support\NoticeText::render($this->type, $this->params, $this->locale)));
+        return new Envelope(subject: '[FreshRoute] '.strip_tags(NoticeText::render($this->type, $this->params, $this->locale)));
     }
 
     public function content(): Content

@@ -2,12 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Enums\EnquiryStatus;
 use App\Enums\ListingStatus;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property ListingStatus $status
+ * @property Carbon|null $harvest_date
+ * @property Carbon|null $available_from
+ * @property Carbon|null $available_to
+ */
 class Listing extends Model
 {
     protected $guarded = ['id'];
@@ -22,21 +29,25 @@ class Listing extends Model
         ];
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Commodity, $this> */
     public function commodity(): BelongsTo
     {
         return $this->belongsTo(Commodity::class);
     }
 
+    /** @return HasMany<ListingPhoto, $this> */
     public function photos(): HasMany
     {
         return $this->hasMany(ListingPhoto::class);
     }
 
+    /** @return HasMany<Enquiry, $this> */
     public function enquiries(): HasMany
     {
         return $this->hasMany(Enquiry::class);

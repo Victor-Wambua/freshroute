@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Role;
+use App\Models\Commodity;
 use App\Services\MatchScorer;
 
 function scoreFor(array $listing = [], array $need = []): array
@@ -60,7 +61,7 @@ it('never matches different commodities, closed listings or closed needs', funct
     $l->update(['status' => 'active']);
     $n->update(['status' => 'closed']);
     expect($scorer->score($l->fresh(), $n->fresh()))->toBeNull();
-    $n->update(['status' => 'open', 'commodity_id' => App\Models\Commodity::create(['slug' => 'maize', 'name_en' => 'Maize', 'name_sw' => 'Mahindi', 'unit_en' => 'bag', 'unit_sw' => 'gunia', 'unit_kg' => 90])->id]);
+    $n->update(['status' => 'open', 'commodity_id' => Commodity::create(['slug' => 'maize', 'name_en' => 'Maize', 'name_sw' => 'Mahindi', 'unit_en' => 'bag', 'unit_sw' => 'gunia', 'unit_kg' => 90])->id]);
     expect($scorer->score($l->fresh(), $n->fresh()))->toBeNull();
 });
 

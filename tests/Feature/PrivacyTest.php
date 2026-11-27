@@ -1,12 +1,14 @@
 <?php
 
 use App\Enums\Role;
+use App\Models\AuditLog;
 use App\Models\DeletionRequest;
 use App\Models\Enquiry;
 use App\Models\ListingPhoto;
 use App\Models\LossEvent;
-use App\Models\User;
 use App\Services\AccountDeletion;
+use App\Services\DataExporter;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Storage;
 
 function farmerWithData(): array
@@ -32,10 +34,10 @@ it('exports everything about the user as JSON, and only the user\'s own records'
 });
 
 it('exports each dataset as CSV with headers and neutralised formulas', function () {
-    $this->withoutMiddleware(Illuminate\Routing\Middleware\ThrottleRequests::class);
+    $this->withoutMiddleware(ThrottleRequests::class);
     [$f] = farmerWithData();
     makeListing($f, ['variety' => '=HYPERLINK("http://evil","x")']);
-    foreach (App\Services\DataExporter::DATASETS as $ds) {
+    foreach (DataExporter::DATASETS as $ds) {
         $res = actingAsUser($f)->get("/my-data/export.csv?dataset={$ds}")->assertOk();
         expect($res->headers->get('content-type'))->toContain('text/csv');
     }
@@ -108,7 +110,7 @@ it('records exports and deletion requests in the audit log', function () {
     $f = makeUser(Role::Farmer);
     actingAsUser($f)->get('/my-data/export.json');
     app(AccountDeletion::class)->request($f);
-    expect(App\Models\AuditLog::pluck('action')->all())->toContain('export.json', 'account.deletion_requested');
+    expect(AuditLog::pluck('action')->all())->toContain('export.json', 'account.deletion_requested');
 });
 
 it('rate limits exports', function () {

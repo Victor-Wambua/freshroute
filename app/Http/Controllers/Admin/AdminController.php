@@ -62,11 +62,13 @@ class AdminController extends Controller
     {
         $d = $request->validate(['type' => ['required', Rule::in(['coop', 'storage', 'transporter'])], 'id' => ['required', 'integer']]);
         // "Verified" is reserved for records a human has actually checked (site visit / documents).
-        match ($d['type']) {
-            'coop' => ($m = Cooperative::findOrFail($d['id']))->update(['verified_at' => now()]),
-            'storage' => ($m = StorageFacility::findOrFail($d['id']))->update(['temperature_status' => 'verified', 'verified_at' => now()]),
-            'transporter' => ($m = TransporterProfile::findOrFail($d['id']))->update(['verified_at' => now()]),
+        $class = match ($d['type']) {
+            'coop' => Cooperative::class,
+            'storage' => StorageFacility::class,
+            default => TransporterProfile::class,
         };
+        $m = $class::findOrFail($d['id']);
+        $m->update($d['type'] === 'storage' ? ['temperature_status' => 'verified', 'verified_at' => now()] : ['verified_at' => now()]);
         Audit::log('admin.verified_'.$d['type'], $m);
 
         return back()->with('status', __('ui.status_updated'));

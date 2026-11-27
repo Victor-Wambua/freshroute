@@ -6,6 +6,7 @@ use App\Contracts\SmsGateway;
 use App\Mail\NoticeMail;
 use App\Models\User;
 use App\Notifications\Notice;
+use App\Support\NoticeText;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -34,7 +35,7 @@ class Notifier
                 Mail::to($user->email)->queue(new NoticeMail($type, $params, $url, $user->locale ?: 'en'));
             }
             if (config('freshroute.sms_enabled') && $user->prefers('sms') && $user->phone) {
-                $this->sms->send($user->id, $user->phone, \App\Support\NoticeText::render($type, $params, $user->locale ?: 'en'));
+                $this->sms->send($user->id, $user->phone, NoticeText::render($type, $params, $user->locale ?: 'en'));
             }
             $n++;
         }

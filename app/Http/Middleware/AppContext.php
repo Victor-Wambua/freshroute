@@ -19,7 +19,7 @@ class AppContext
 
             return redirect()->route('login')->withErrors(['email' => __('ui.err_suspended')]);
         }
-        $locale = $user?->locale ?? $request->session()->get('locale', 'en');
+        $locale = $user ? $user->locale : $request->session()->get('locale', 'en');
         app()->setLocale(in_array($locale, ['en', 'sw'], true) ? $locale : 'en');
         if ($user && (! $user->last_active_at || $user->last_active_at->lt(now()->subMinutes(10)))) {
             $user->forceFill(['last_active_at' => now()])->saveQuietly();

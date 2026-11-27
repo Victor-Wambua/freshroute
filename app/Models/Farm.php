@@ -10,11 +10,13 @@ class Farm extends Model
 {
     protected $guarded = ['id'];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return HasMany<CropProfile, $this> */
     public function crops(): HasMany
     {
         return $this->hasMany(CropProfile::class);

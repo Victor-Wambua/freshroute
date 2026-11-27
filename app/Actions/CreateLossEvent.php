@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\LossReconciler;
 use App\Support\Audit;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -48,7 +49,7 @@ class CreateLossEvent
         }
 
         $e = LossEvent::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'user_id' => $user->id, 'commodity_id' => Commodity::mvp()->id, 'lot_id' => $lot?->id,
             'stage' => $d['stage'], 'category' => $d['category'], 'bags' => (int) $d['bags'], 'reason' => $d['reason'],
             'occurred_on' => $d['occurred_on'] ?? today()->toDateString(),

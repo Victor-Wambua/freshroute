@@ -7,6 +7,7 @@ use App\Models\Commodity;
 use App\Models\HarvestLot;
 use App\Models\User;
 use App\Support\Audit;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CreateHarvestLot
@@ -32,7 +33,7 @@ class CreateHarvestLot
             throw ValidationException::withMessages(['sold_bags' => __('ui.err_sold_gt_harvested')]);
         }
         $lot = HarvestLot::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'user_id' => $user->id, 'commodity_id' => Commodity::mvp()->id,
             'harvested_on' => $d['harvested_on'], 'harvested_bags' => (int) $d['harvested_bags'], 'sold_bags' => $sold,
             'origin' => $user->origin === 'synthetic' ? 'synthetic' : 'user_submitted',

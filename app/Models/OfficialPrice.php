@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon|null $collected_on
+ * @property Carbon|null $retrieved_at
+ */
 class OfficialPrice extends Model
 {
     protected $guarded = ['id'];
@@ -15,6 +19,7 @@ class OfficialPrice extends Model
         return ['collected_on' => 'date', 'retrieved_at' => 'datetime'];
     }
 
+    /** @return BelongsTo<PriceSource, $this> */
     public function source(): BelongsTo
     {
         return $this->belongsTo(PriceSource::class, 'price_source_id');

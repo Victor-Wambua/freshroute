@@ -22,7 +22,6 @@ use App\Models\UserPrice;
 use App\Services\Price\CsvPriceFeedAdapter;
 use App\Services\Price\PriceImporter;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 /**
  * SYNTHETIC DEMONSTRATION DATA. Every person, business, quantity and price created here is invented.

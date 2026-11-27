@@ -9,6 +9,7 @@ use App\Services\Price\PriceFeedAdapter;
 use App\Services\Price\PriceImporter;
 use App\Services\Price\PriceRecord;
 use App\Services\Price\PriceStats;
+use App\Support\NoticeText;
 
 function priceCsv(array $rows): string
 {
@@ -157,7 +158,7 @@ it('notifies farmers and buyers of material official price changes only (prefixe
     $f2 = priceCsv([synthRow([6 => today()->subDays(7)->toDateString(), 5 => '2800'])]);
     $this->artisan('fr:prices:import', ['file' => $f2, '--source' => $src->id])->assertSuccessful();
     expect($f->notifications)->toHaveCount(1)->and($b->notifications)->toHaveCount(1)->and($t->notifications)->toHaveCount(0);
-    expect(App\Support\NoticeText::render('price_change', $f->notifications->first()->data['params']))->toStartWith('Synthetic price change');
+    expect(NoticeText::render('price_change', $f->notifications->first()->data['params']))->toStartWith('Synthetic price change');
     // a 2% move is not notified
     $f3 = priceCsv([synthRow([6 => today()->subDays(1)->toDateString(), 5 => '2830'])]);
     $this->artisan('fr:prices:import', ['file' => $f3, '--source' => $src->id])->assertSuccessful();

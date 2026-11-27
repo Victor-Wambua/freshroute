@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Role;
-use App\Models\Cooperative;
+use App\Models\AuditLog;
 use App\Models\Farm;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -88,7 +88,7 @@ it('rejects a wrong password with a generic message and audits the failure witho
     makeUser(Role::Farmer, ['email' => 'f@test.example']);
     $this->post('/login', ['email' => 'f@test.example', 'password' => 'wrong-password-1'])->assertSessionHasErrors('email');
     $this->assertGuest();
-    $log = App\Models\AuditLog::where('action', 'auth.login_failed')->first();
+    $log = AuditLog::where('action', 'auth.login_failed')->first();
     expect(json_encode($log->meta))->not->toContain('f@test.example');
 });
 

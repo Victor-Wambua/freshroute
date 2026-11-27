@@ -58,7 +58,7 @@ class StorageController extends Controller
     public function update(Request $request, StorageFacility $facility, Notifier $notifier)
     {
         $this->authorize('manage', $facility);
-        $before = $facility->free_bags;
+        $wasFull = $facility->free_bags === 0;
         $data = $this->data($request);
         // A changed temperature claim is self-declared again until re-verified.
         if (($data['temp_min_c'] ?? null) !== $facility->temp_min_c || ($data['temp_max_c'] ?? null) !== $facility->temp_max_c) {
@@ -67,7 +67,7 @@ class StorageController extends Controller
         }
         $facility->update($data);
         Audit::log('storage.updated', $facility);
-        if ($before === 0 && $facility->free_bags > 0) {
+        if ($wasFull && $data['free_bags'] > 0) {
             // Storage availability: tell farmers in the same county.
             $farmers = User::where('role', Role::Farmer->value)->where('county', $facility->county)->get();
             $notifier->send($farmers, 'storage_available', ['name' => $facility->name, 'free' => $facility->free_bags], route('storage.index', [], false));

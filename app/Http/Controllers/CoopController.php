@@ -14,7 +14,7 @@ class CoopController extends Controller
     private function memberIds(Request $request): array
     {
         $coop = $request->user()->coop_id;
-        abort_unless($coop, 403);
+        abort_if($coop === null, 403);
 
         return User::where('coop_id', $coop)->where('role', Role::Farmer->value)->pluck('id')->all();
     }

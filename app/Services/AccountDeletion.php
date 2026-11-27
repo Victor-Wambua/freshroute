@@ -61,7 +61,7 @@ class AccountDeletion
             $u->enquiries()->update(['message' => null]);
             $u->needs()->where('status', 'open')->update(['status' => 'closed']);
             $u->facilities()->update(['active' => false, 'contact_phone' => null]);
-            $u->transporterProfile()?->update(['active' => false]);
+            $u->transporterProfile()->update(['active' => false]);
             $u->savedSuppliers()->delete();
             DB::table('notifications')->where('notifiable_type', User::class)->where('notifiable_id', $u->id)->delete();
             DB::table('sessions')->where('user_id', $u->id)->delete();

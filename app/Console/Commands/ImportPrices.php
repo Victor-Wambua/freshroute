@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\PriceSource;
+use App\Models\User;
+use App\Services\Notifier;
 use App\Services\Price\CsvPriceFeedAdapter;
 use App\Services\Price\PriceImporter;
-use App\Services\Notifier;
-use App\Models\User;
 use App\Support\Money;
 use Illuminate\Console\Command;
 

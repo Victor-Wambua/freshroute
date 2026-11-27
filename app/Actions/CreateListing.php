@@ -13,6 +13,7 @@ use App\Services\Notifier;
 use App\Support\Audit;
 use App\Support\Money;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -57,7 +58,7 @@ class CreateListing
         }
 
         $listing = Listing::create([
-            'client_uuid' => $d['client_uuid'] ?? (string) \Illuminate\Support\Str::uuid(),
+            'client_uuid' => $d['client_uuid'] ?? (string) Str::uuid(),
             'user_id' => $user->id,
             'farm_id' => $farmId,
             'commodity_id' => Commodity::mvp()->id,

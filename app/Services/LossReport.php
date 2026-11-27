@@ -37,7 +37,7 @@ class LossReport
 
         $detail = $rows->map(fn ($r) => [
             'commodity' => $r->commodity->name_en, 'stage' => $r->stage, 'category' => $r->category,
-            'reason' => $r->reason, 'bags' => (int) $r->bags, 'events' => (int) $r->events,
+            'reason' => $r->reason, 'bags' => (int) $r->bags, 'events' => (int) $r->getAttribute('events'),
         ])->sortBy([['commodity', 'asc'], ['stage', 'asc'], ['reason', 'asc']])->values()->all();
 
         $byCommodity = $rows->groupBy(fn ($r) => $r->commodity->name_en)->map(fn ($g) => (int) $g->sum('bags'))->all();

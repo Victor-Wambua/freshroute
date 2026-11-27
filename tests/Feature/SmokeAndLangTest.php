@@ -5,6 +5,7 @@ use App\Models\Enquiry;
 use App\Models\Listing;
 use App\Models\StorageFacility;
 use App\Models\User;
+use App\Services\DataExporter;
 use Database\Seeders\SyntheticDataSeeder;
 
 beforeEach(fn () => $this->seed(SyntheticDataSeeder::class));
@@ -21,7 +22,7 @@ it('renders every page for every role against the synthetic dataset without erro
     $facility = StorageFacility::first();
     $matrix = [
         'wanjiru@freshroute.test' => ['/home', '/sell', '/my/listings', "/listings/{$listing->id}", "/listings/{$listing->id}/edit", '/calendar', '/calendar?m=2027-01', '/farms', '/losses', '/losses/report', '/enquiries', "/enquiries/{$enq->id}", '/deliveries', '/storage', '/transport', '/prices', '/prices?tab=user', '/prices?market=Molo', '/alerts', '/my-data', '/more'],
-        'njeri@freshroute.test' => ['/home', '/market', '/market?q=Molo&county=Nakuru&min_bags=50&grade[]=A&sort=price_desc', "/market/{$listing->id}", "/market/compare?ids[]=1&ids[]=2&ids[]=3", '/saved', '/needs', '/needs/new', '/enquiries', '/deliveries', '/storage', '/transport', '/prices', '/alerts', '/my-data', '/more'],
+        'njeri@freshroute.test' => ['/home', '/market', '/market?q=Molo&county=Nakuru&min_bags=50&grade[]=A&sort=price_desc', "/market/{$listing->id}", '/market/compare?ids[]=1&ids[]=2&ids[]=3', '/saved', '/needs', '/needs/new', '/enquiries', '/deliveries', '/storage', '/transport', '/prices', '/alerts', '/my-data', '/more'],
         'njoro-cold@freshroute.test' => ['/home', '/storage/mine', '/storage/new', "/storage/{$facility->id}/edit", '/storage-requests', '/storage', '/prices', '/alerts', '/my-data', '/more'],
         'kariuki@freshroute.test' => ['/home', '/transport/profile', '/deliveries', "/deliveries/{$deliv->id}", '/transport', '/prices', '/alerts', '/my-data', '/more'],
         'hannah@freshroute.test' => ['/home', '/coop', '/coop/members', '/coop/members?q=an', '/coop/reports', '/prices', '/alerts', '/my-data', '/more', '/mfa/setup'],
@@ -72,7 +73,7 @@ it('has every translation key used in code and views in both languages', functio
         'act_' => ['active', 'reserved', 'sold', 'expired', 'withdrawn'], 'es_' => ['sent', 'viewed', 'replied', 'agreed', 'declined', 'withdrawn'], 'ds_' => ['requested', 'accepted', 'picked_up', 'delivered', 'declined', 'cancelled'],
         'dact_' => ['accepted', 'declined', 'picked_up', 'delivered', 'cancelled'], 'stage_' => config('freshroute.stages'), 'cat_' => config('freshroute.loss_categories'), 'reason_' => config('freshroute.loss_reasons'),
         'buyer_type_' => config('freshroute.buyer_types'), 'veh_' => config('freshroute.vehicle_types'), 'grade_' => config('freshroute.grades'), 'licence_' => config('freshroute.licence_statuses'), 'sr_' => ['sent', 'accepted', 'declined'],
-        'sr_act_' => ['accepted', 'declined'], 'need_' => ['open', 'closed'], 'sort_' => ['harvest', 'price_asc', 'price_desc', 'qty'], 'verify_' => ['coop', 'storage', 'transporter'], 'ds_' => App\Services\DataExporter::DATASETS + ['requested', 'accepted', 'picked_up', 'delivered', 'declined', 'cancelled'],
+        'sr_act_' => ['accepted', 'declined'], 'need_' => ['open', 'closed'], 'sort_' => ['harvest', 'price_asc', 'price_desc', 'qty'], 'verify_' => ['coop', 'storage', 'transporter'], 'ds_' => DataExporter::DATASETS + ['requested', 'accepted', 'picked_up', 'delivered', 'declined', 'cancelled'],
     ];
     foreach ($families as $prefix => $vals) {
         foreach ($vals as $v) {

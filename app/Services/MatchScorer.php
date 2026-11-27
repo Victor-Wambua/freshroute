@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BuyerNeed;
 use App\Models\Listing;
 use App\Support\Money;
+use Illuminate\Support\Collection;
 
 /**
  * Explainable match score between a buyer need (demand) and a listing (supply).
@@ -13,6 +14,7 @@ use App\Support\Money;
  */
 class MatchScorer
 {
+    /** @return array{score: int, parts: array<int, array<string, mixed>>}|null */
     public function score(Listing $l, BuyerNeed $n): ?array
     {
         if ($l->commodity_id !== $n->commodity_id || ! $l->status->isOpen() || $n->status !== 'open') {
@@ -56,7 +58,7 @@ class MatchScorer
         return ['score' => array_sum(array_column($parts, 'points')), 'parts' => $parts];
     }
 
-    /** @return list<array{listing: Listing, score: int, parts: array}> best first */
+    /** @return Collection<int, array{score: int, parts: array<int, array<string, mixed>>, listing: Listing}> best first */
     public function matchesForNeed(BuyerNeed $need, int $limit = 10)
     {
         return Listing::open()->with(['user', 'commodity'])

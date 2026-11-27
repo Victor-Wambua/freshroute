@@ -25,7 +25,7 @@ class CsvPriceFeedAdapter implements PriceFeedAdapter
         $line = 1;
         while (($row = fgetcsv($h, 0, ',', '"', '')) !== false) {
             $line++;
-            if ($row === [null] || $row === []) {
+            if ($row === [null]) {
                 continue;
             }
             $a = $header && count($row) === count($header) ? array_combine($header, $row) : null;
