@@ -1,0 +1,27 @@
+# STAGING ONLY. NOT RUN on the development machine (no Docker/Postgres available here).
+services:
+  app:
+    build: .
+    env_file: .env
+    environment: { DB_CONNECTION: pgsql, DB_HOST: db, DB_PORT: 5432, DB_DATABASE: freshroute, DB_USERNAME: freshroute, DB_PASSWORD: "${DB_PASSWORD:?set DB_PASSWORD}" }
+    ports: ["8080:8080"]
+    depends_on: [db]
+    volumes: [storage:/var/www/storage]
+  worker:
+    build: .
+    command: php artisan queue:work --tries=3
+    env_file: .env
+    environment: { DB_CONNECTION: pgsql, DB_HOST: db, DB_DATABASE: freshroute, DB_USERNAME: freshroute, DB_PASSWORD: "${DB_PASSWORD:?set DB_PASSWORD}" }
+    depends_on: [db]
+    volumes: [storage:/var/www/storage]
+  scheduler:
+    build: .
+    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
+    env_file: .env
+    environment: { DB_CONNECTION: pgsql, DB_HOST: db, DB_DATABASE: freshroute, DB_USERNAME: freshroute, DB_PASSWORD: "${DB_PASSWORD:?set DB_PASSWORD}" }
+    depends_on: [db]
+  db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_DB: freshroute, POSTGRES_USER: freshroute, POSTGRES_PASSWORD: "${DB_PASSWORD:?set DB_PASSWORD}" }
+    volumes: [pgdata:/var/lib/postgresql/data]
+volumes: { storage: {}, pgdata: {} }

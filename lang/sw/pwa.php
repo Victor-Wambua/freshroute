@@ -15,4 +15,5 @@ return [
     'synced' => 'Vitu :n vimetumwa.',
     'saved_offline' => 'Imehifadhiwa kwenye simu hii. Itatumwa ukiwa mtandaoni.',
     'photo_skipped' => 'Picha hazihifadhiwi nje ya mtandao: ongeza picha baada ya kutumwa.',
+    'pick_one' => 'Tafadhali chagua chaguo moja.',
 ];

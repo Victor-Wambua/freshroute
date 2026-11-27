@@ -14,4 +14,5 @@ return [
     'synced' => ':n saved items sent.',
     'saved_offline' => 'Saved on this phone. It will be sent when you are online.',
     'photo_skipped' => 'Photos are not saved offline: add the photo after it is sent.',
+    'pick_one' => 'Please choose one option.',
 ];

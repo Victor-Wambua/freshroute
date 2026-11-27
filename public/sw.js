@@ -14,7 +14,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil((async () => {
         const pages = await caches.open(PAGES);
         const assets = await caches.open(ASSETS);
-        const res = await fetch('/offline', { credentials: 'same-origin' });
+        const res = await fetch('/offline', { credentials: 'same-origin', headers: { 'X-FR-Warm': '1' } });
         const html = await res.clone().text();
         await pages.put('/offline', res);
         const urls = [...html.matchAll(/(?:href|src)="([^"]*\/build\/assets\/[^"]+)"/g)].map((m) => new URL(m[1], self.location.origin).pathname);
@@ -33,13 +33,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('message', (event) => {
     const d = event.data || {};
     if (d.type === 'clear') {
-        event.waitUntil((async () => { await caches.delete(PAGES); const c = await caches.open(PAGES); await fetch('/offline').then((r) => c.put('/offline', r)).catch(() => {}); })());
+        event.waitUntil((async () => { await caches.delete(PAGES); const c = await caches.open(PAGES); await fetch('/offline', { headers: { 'X-FR-Warm': '1' } }).then((r) => c.put('/offline', r)).catch(() => {}); })());
     }
     if (d.type === 'warm') {
         event.waitUntil((async () => {
             const c = await caches.open(PAGES);
             for (const u of d.urls || []) {
-                try { const r = await fetch(u, { credentials: 'same-origin', redirect: 'manual' }); if (r.status === 200) await c.put(u, r); } catch (e) { /* offline */ }
+                try { const r = await fetch(u, { credentials: 'same-origin', redirect: 'manual', headers: { 'X-FR-Warm': '1' } }); if (r.status === 200) await c.put(u, r); } catch (e) { /* offline */ }
             }
         })());
     }

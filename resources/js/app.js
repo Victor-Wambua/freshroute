@@ -76,6 +76,15 @@ if (wiz) {
         for (const f of fields) {
             if (!f.checkValidity()) { f.reportValidity(); return false; }
         }
+        // choice buttons write to a hidden required input: make sure one was picked
+        for (const h of $$('input[type=hidden][required]', steps[at])) {
+            if (!h.value) {
+                let e = $('.err[data-choice-err]', steps[at]);
+                if (!e) { e = document.createElement('div'); e.className = 'err'; e.setAttribute('role', 'alert'); e.dataset.choiceErr = '1'; e.textContent = t('pick_one'); steps[at].append(e); }
+                steps[at].querySelector('[data-choice]')?.focus();
+                return false;
+            }
+        }
         return true;
     };
     $('[data-next]', wiz).addEventListener('click', () => { if (validStep()) show(at + 1); });
@@ -216,11 +225,16 @@ if (navigator.onLine) runSync();
 // ---- Service worker + logout cache hygiene -----------------------------------------------------------
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     navigator.serviceWorker.register('/sw.js').then(() => navigator.serviceWorker.ready).then((reg) => {
-        if (document.body.dataset.authed === '1' && navigator.onLine) {
+        let last = 0;
+        try { last = Number(localStorage.getItem('fr-warm') || 0); } catch { /* storage unavailable */ }
+        // warm the offline page cache at most once every 30 minutes per device, never on every page view
+        if (document.body.dataset.authed === '1' && navigator.onLine && Date.now() - last > 30 * 60 * 1000) {
+            try { localStorage.setItem('fr-warm', String(Date.now())); } catch { /* storage unavailable */ }
             reg.active?.postMessage({ type: 'warm', urls: ['/home', '/sell', '/my/listings', '/losses', '/market', '/calendar', '/prices', '/alerts', '/enquiries', '/more'] });
         }
     }).catch(() => {});
 }
 $$('form[action$="/logout"]').forEach((f) => f.addEventListener('submit', () => {
     navigator.serviceWorker?.controller?.postMessage({ type: 'clear' });
+    try { localStorage.removeItem('fr-warm'); } catch { /* storage unavailable */ }
 }));
