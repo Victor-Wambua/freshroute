@@ -1,0 +1,28 @@
+/* FreshRoute design tokens. Single source; JSON mirrors it (tools/tok2json.mjs). */
+:root{
+  --fr-bg:#FBF6EA; --fr-surface:#FFFFFF; --fr-surface-2:#F3EAD6; --fr-ink:#2A1D12; --fr-ink-2:#5A4636; --fr-line:#CDBB98; --fr-border:#857050;
+  --fr-primary:#1F5E34; --fr-on-primary:#FFFFFF; --fr-clay:#A94A22; --fr-on-clay:#FFFFFF;
+  --fr-sun:#FFC94A; --fr-on-sun:#2A1D12;
+  --fr-official:#17476B; --fr-official-bg:#E1EEF8; --fr-user:#6B2D5C; --fr-user-bg:#F6E4F1;
+  --fr-ok:#1F5E34; --fr-ok-bg:#E0F1E4; --fr-warn:#7A4F00; --fr-warn-bg:#FFEFC2; --fr-danger:#A4262C; --fr-danger-bg:#FBE1E1;
+  --fr-focus:#0B57D0;
+  --fr-font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fr-font-display:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+  --fr-r-sm:8px; --fr-r-md:14px; --fr-r-lg:22px; --fr-touch:56px; --fr-touch-min:48px;
+  --fr-s1:4px; --fr-s2:8px; --fr-s3:12px; --fr-s4:16px; --fr-s5:24px; --fr-s6:32px; --fr-s7:48px;
+  --fr-shadow:0 1px 0 rgba(42,29,18,.06),0 6px 16px -8px rgba(42,29,18,.25);
+}
+:root[data-theme="dark"]{
+  --fr-bg:#1A130D; --fr-surface:#261C14; --fr-surface-2:#33261B; --fr-ink:#F6EBD8; --fr-ink-2:#CDBBA2; --fr-line:#4A3A2B; --fr-border:#9C8468;
+  --fr-primary:#7CCB8E; --fr-on-primary:#0F2A18; --fr-clay:#F0A27E; --fr-on-clay:#2A1208;
+  --fr-sun:#FFC94A; --fr-on-sun:#2A1D12;
+  --fr-official:#8FC3EA; --fr-official-bg:#16303F; --fr-user:#E3A3D3; --fr-user-bg:#3B1F35;
+  --fr-ok:#7CCB8E; --fr-ok-bg:#1B3524; --fr-warn:#F2C25B; --fr-warn-bg:#3F2F0A; --fr-danger:#FF9A9F; --fr-danger-bg:#431B1D;
+  --fr-focus:#8AB4F8; --fr-shadow:0 1px 0 rgba(0,0,0,.4);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --fr-bg:#1A130D; --fr-surface:#261C14; --fr-surface-2:#33261B; --fr-ink:#F6EBD8; --fr-ink-2:#CDBBA2; --fr-line:#4A3A2B; --fr-border:#9C8468;
+  --fr-primary:#7CCB8E; --fr-on-primary:#0F2A18; --fr-clay:#F0A27E; --fr-on-clay:#2A1208;
+  --fr-official:#8FC3EA; --fr-official-bg:#16303F; --fr-user:#E3A3D3; --fr-user-bg:#3B1F35;
+  --fr-ok:#7CCB8E; --fr-ok-bg:#1B3524; --fr-warn:#F2C25B; --fr-warn-bg:#3F2F0A; --fr-danger:#FF9A9F; --fr-danger-bg:#431B1D;
+  --fr-focus:#8AB4F8; --fr-shadow:0 1px 0 rgba(0,0,0,.4);}}
