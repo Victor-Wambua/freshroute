@@ -17,3 +17,5 @@
 - **Data retention / legal basis** for audit logs and anonymised loss records not reviewed by counsel. No Data Protection Act registration performed. No compliance claim.
 - Match score weights are a reasonable first guess, not calibrated with users.
 - Coop membership is self-selected at sign-up (no coop approval step); coop verification is a manual admin action.
+- **E2E flake:** the three offline Playwright tests were intermittently failing in full-suite runs (they passed alone). Mitigations added (wait for cache entries to be readable, let warm-up finish, SQLite WAL + file cache for the e2e server) and one retry is allowed for that file; the last three consecutive full runs were green (29/29), but the cause was not fully isolated.
+- **Design deviations:** see DESIGN-FIDELITY.md (KPI cards are 2x2 on phones, pages are server-rendered instead of hash routes, compare is a page not a dialog, loss form is inline not a dialog).
