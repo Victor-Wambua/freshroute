@@ -29,7 +29,8 @@ export async function loginCoop(page, email = 'hannah@freshroute.test') {
         return;
     }
     await login(page, email, { fresh: true });
-    await page.fill('#f-code', totp('JBSWY3DPEHPK3PXP'));
+    // next 30 s step (inside the server's +-1 window) so it is never the same code the MFA test just used (replay is refused)
+    await page.fill('#f-code', totp('JBSWY3DPEHPK3PXP', Date.now() + 30000));
     await page.click('main button[type=submit]');
     await page.waitForURL((u) => !u.pathname.startsWith('/mfa'));
     cache.set(email, await page.context().cookies());

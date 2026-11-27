@@ -71,7 +71,7 @@ self.addEventListener('fetch', (event) => {
                 if (res.ok && res.status === 200 && !res.redirected) c.put(url.pathname + url.search, res.clone());
                 return res;
             } catch (e) {
-                return (await c.match(url.pathname + url.search)) || (await c.match(url.pathname)) || (await c.match('/offline'));
+                return (await c.match(url.pathname + url.search, { ignoreVary: true })) || (await c.match(url.pathname, { ignoreVary: true })) || (await c.match('/offline', { ignoreVary: true }));
             }
         })());
     }

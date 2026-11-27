@@ -12,11 +12,11 @@ APP_URL=http://localhost:4362
 DB_CONNECTION=sqlite
 DB_DATABASE=$(pwd)/database/e2e.sqlite
 SESSION_DRIVER=database
-CACHE_STORE=database
+CACHE_STORE=file
 QUEUE_CONNECTION=sync
 MAIL_MAILER=log
 LOG_CHANNEL=single
 FR_SHOW_SYNTHETIC_BANNER=true
 ENVEOF
-rm -f database/e2e.sqlite && touch database/e2e.sqlite
+rm -rf storage/framework/cache/data; rm -f database/e2e.sqlite database/e2e.sqlite-wal database/e2e.sqlite-shm && touch database/e2e.sqlite
 APP_ENV=e2e php artisan migrate:fresh --seed --force --no-interaction > /dev/null

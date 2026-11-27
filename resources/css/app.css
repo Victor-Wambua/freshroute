@@ -74,7 +74,7 @@ main{padding:var(--fr-s4);max-width:1120px;width:100%}
 .iconbtn .dot{position:absolute;top:6px;right:6px;width:12px;height:12px;border-radius:50%;background:var(--fr-clay);border:2px solid var(--fr-surface)}
 .langbtn{font-weight:800;min-width:var(--fr-touch-min);gap:4px;padding:0 10px}
 label,.lbl{display:block;font-weight:700;margin-bottom:6px}
-input[type=text],input[type=search],input[type=tel],input[type=number],input[type=date],select,textarea{width:100%;min-height:var(--fr-touch);padding:10px 14px;border-radius:var(--fr-r-md);border:2px solid var(--fr-border);background:var(--fr-surface)}
+input:not([type]),input[type=text],input[type=email],input[type=password],input[type=search],input[type=tel],input[type=number],input[type=date],select,textarea{width:100%;min-height:var(--fr-touch);padding:10px 14px;border-radius:var(--fr-r-md);border:2px solid var(--fr-border);background:var(--fr-surface)}
 input[aria-invalid=true],select[aria-invalid=true]{border-color:var(--fr-danger)}
 .err{color:var(--fr-danger);font-weight:600;margin-top:6px;display:flex;gap:6px;align-items:flex-start}
 .hint{color:var(--fr-ink-2);font-size:.9rem;margin-top:6px}
@@ -199,3 +199,6 @@ dl.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}dl.fa
 
 .tabs a[aria-current=page]{border-color:var(--fr-primary);background:var(--fr-ok-bg)}
 .tabs a{text-decoration:none}
+
+.brand{min-height:48px}
+.brand{min-width:48px}

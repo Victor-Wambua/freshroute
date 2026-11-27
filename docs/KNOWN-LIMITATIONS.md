@@ -1,0 +1,19 @@
+# Known limitations (disclosed, not hidden)
+
+- **Not production ready.** Staging only. No pilot has happened; nothing here is validated with farmers.
+- **No live official prices.** KAMIS and WFP/HDX were not accessible or licence-confirmed; only synthetic rows are seeded. The importer is tested but has never read a real feed.
+- **Synthetic demo data** everywhere in the seed; real users' records are labelled user-submitted.
+- **No payments, escrow, custody or money movement** by design. Delivery price is informational.
+- **Swahili is a machine-style draft** and needs native review before use (`lang/sw/*`, marked in the files).
+- **SMS, USSD, WhatsApp not built**: SMS is an interface plus sandbox gateway recording to `sms_outbox`, disabled. Email uses the log driver (no provider).
+- **Offline:** photos cannot be captured offline (a notice says so); only listing, loss, enquiry, need, price and lot records queue. A connection drop in the middle of a normal online submit shows the browser error page (the record is not queued). Cached pages are per device and cleared at sign-out only. No Background Sync API. Tested in desktop Chromium only, not on real low-end phones or iOS Safari.
+- **Delivery tracking is manual** status updates, no GPS. Storage temperature is self-declared until staff verify.
+- **MFA** has no QR code (key typed by hand) and no admin reset flow.
+- **Coverage is not measured**: no PCOV/Xdebug on this machine and system extensions were not installed. Test counts are real; coverage percentages are not reported.
+- **Larastan level 5**, not higher. Models carry hand-added property docblocks.
+- **Accessibility:** computed checks only (labels, target sizes, contrast tokens from design); no screen-reader (VoiceOver/TalkBack) pass, no 320px or 200% zoom test.
+- **Postgres and Docker artefacts were never run** here (no Docker/Postgres). Migrations use portable column types but were exercised only on SQLite.
+- **One commodity, two counties**; markets and place lists are config-driven. Production-share claims for the counties are unverified.
+- **Data retention / legal basis** for audit logs and anonymised loss records not reviewed by counsel. No Data Protection Act registration performed. No compliance claim.
+- Match score weights are a reasonable first guess, not calibrated with users.
+- Coop membership is self-selected at sign-up (no coop approval step); coop verification is a manual admin action.

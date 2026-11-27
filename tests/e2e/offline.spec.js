@@ -22,7 +22,7 @@ test('service worker registers, precaches the shell and serves cached pages offl
     await login(page, 'samuel@freshroute.test');
     await page.goto('/home');
     await page.waitForFunction(async () => (await navigator.serviceWorker.getRegistration())?.active?.state === 'activated');
-    await page.waitForFunction(async () => { const names = await caches.keys(); for (const n of names) { if (await (await caches.open(n)).match('/sell')) return true; } return false; }, null, { timeout: 15000 });
+    await page.waitForFunction(async () => { const c = await caches.open('fr-pages-fr-v1'); for (const u of ['/sell', '/losses', '/my/listings', '/more']) { if (!(await c.match(u))) return false; } return true; }, null, { timeout: 30000 });
     await context.setOffline(true);
     await page.goto('/sell');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sell potatoes');
@@ -39,7 +39,7 @@ test('listing and loss captured offline are queued, then sync once, idempotently
     await login(page, 'david@freshroute.test');
     await page.goto('/home');
     await page.waitForFunction(async () => (await navigator.serviceWorker.getRegistration())?.active?.state === 'activated');
-    await page.waitForFunction(async () => { for (const n of await caches.keys()) { const c = await caches.open(n); if ((await c.match('/sell')) && (await c.match('/losses'))) return true; } return false; }, null, { timeout: 15000 });
+    await page.waitForFunction(async () => { const c = await caches.open('fr-pages-fr-v1'); for (const u of ['/sell', '/losses', '/my/listings', '/more']) { if (!(await c.match(u))) return false; } return true; }, null, { timeout: 30000 });
 
     await context.setOffline(true);
 
@@ -102,7 +102,7 @@ test('an invalid offline record is not lost silently: it is flagged for the user
     await login(page, 'joyce@freshroute.test');
     await page.goto('/home');
     await page.waitForFunction(async () => (await navigator.serviceWorker.getRegistration())?.active?.state === 'activated');
-    await page.waitForFunction(async () => { for (const n of await caches.keys()) { const c = await caches.open(n); if (await c.match('/losses')) return true; } return false; }, null, { timeout: 15000 });
+    await page.waitForFunction(async () => { const c = await caches.open('fr-pages-fr-v1'); for (const u of ['/sell', '/losses', '/my/listings', '/more']) { if (!(await c.match(u))) return false; } return true; }, null, { timeout: 30000 });
     await context.setOffline(true);
     await page.goto('/losses');
     await page.click('[data-choice="#f-stage"][data-value="market"]');

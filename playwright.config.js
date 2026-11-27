@@ -18,7 +18,7 @@ export default defineConfig({
     },
     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 900 } } }],
     webServer: {
-        command: 'sh -c "./scripts/e2e-env.sh && APP_ENV=e2e php artisan serve --host=127.0.0.1 --port=4362 --no-reload"',
+        command: 'sh -c "./scripts/e2e-env.sh && PHP_CLI_SERVER_WORKERS=4 APP_ENV=e2e php artisan serve --host=127.0.0.1 --port=4362 --no-reload"',
         url: 'http://localhost:4362/health',
         reuseExistingServer: false,
         timeout: 120_000,

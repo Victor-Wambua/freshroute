@@ -36,9 +36,7 @@ for (const [vp, size] of [['mobile', { width: 390, height: 844 }], ['desktop', {
             await page.goto('/login');
             await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
             await page.screenshot({ path: `${out}/${vp}-${theme}-login.png` });
-            await login(page, 'hannah@freshroute.test');
-            await page.fill('#f-code', totp('JBSWY3DPEHPK3PXP'));
-            await page.click('main button[type=submit]');
+            await loginCoop(page);
             for (const [name, url] of [['coop-dashboard', '/coop'], ['coop-members', '/coop/members'], ['coop-reports', '/coop/reports']]) {
                 await page.goto(url);
                 await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
