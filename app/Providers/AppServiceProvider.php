@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Contracts\SmsGateway;
 use App\Services\SandboxSmsGateway;
+use App\Support\WarmSafeSessionHandler;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -19,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Session::extend('database', fn ($app) => new \App\Support\WarmSafeSessionHandler(
+        Session::extend('database', fn ($app) => new WarmSafeSessionHandler(
             $app['db']->connection(config('session.connection')), config('session.table'), config('session.lifetime'), $app
         ));
         $key = fn (Request $r) => $r->user()?->id ?: $r->ip();
