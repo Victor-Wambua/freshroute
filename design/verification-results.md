@@ -7,7 +7,7 @@ PASS  login screen renders 4 roles
 PASS  Swahili toggle labels nav
 PASS  English toggle back
 PASS  quality required validation
-PASS  listing published and appears in My produce - 9 taps, 4.732s incl. 450ms waits
+PASS  listing published and appears in My produce - 9 taps, 4.746s incl. 450ms waits
 PASS  new listing taps <= 10 - 9
 PASS  bags=0 shows error
 PASS  offline banner
