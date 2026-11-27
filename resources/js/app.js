@@ -169,8 +169,11 @@ async function renderQueuedLists() {
     });
 }
 
+let retryDelay = 0;
 async function runSync(manual = false) {
     const r = await syncNow();
+    // a failed attempt (network not ready right after reconnecting, server blip) retries soon with backoff, instead of waiting for the 30 s poll
+    if (r.error) { retryDelay = Math.min((retryDelay || 1500) * 2, 20000); clearTimeout(runSync.h); runSync.h = setTimeout(() => runSync(), retryDelay); } else if (!r.skipped) { retryDelay = 0; }
     if (r.auth === false) { if (manual) toast(t('session_expired')); return; }
     if (r.error && manual) toast(t('sync_failed'));
     if (r.created || r.duplicate) {
@@ -238,3 +241,33 @@ $$('form[action$="/logout"]').forEach((f) => f.addEventListener('submit', () => 
     navigator.serviceWorker?.controller?.postMessage({ type: 'clear' });
     try { localStorage.removeItem('fr-warm'); } catch { /* storage unavailable */ }
 }));
+
+// ---- Photo upload: shrink big phone photos before sending (slow connections, 4 MB server limit) ----------------------
+$$('input[type=file][data-shrink]').forEach((input) => input.addEventListener('change', async () => {
+    const f = input.files?.[0];
+    if (!f || f.size < 900 * 1024 || !/^image\/(jpeg|png|webp)$/.test(f.type) || !window.DataTransfer) return;
+    try {
+        const bmp = await createImageBitmap(f);
+        const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+        c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+        const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.8));
+        if (!blob || blob.size >= f.size) return;
+        const dt = new DataTransfer();
+        dt.items.add(new File([blob], f.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }));
+        input.files = dt.files;
+        let h = input.parentElement.querySelector('[data-shrunk]');
+        if (!h) { h = document.createElement('div'); h.className = 'hint'; h.dataset.shrunk = '1'; h.setAttribute('role', 'status'); input.parentElement.append(h); }
+        h.textContent = t('photo_ready', { kb: Math.round(blob.size / 1024) });
+    } catch { /* keep the original file */ }
+}));
+
+// Market filters are collapsed on phones only (CSS keeps them visible without JS and on wide screens)
+$$('[data-toggle]').forEach((b) => {
+    const target = $(b.dataset.toggle);
+    if (!target) return;
+    const sync = () => b.setAttribute('aria-expanded', target.classList.contains('on') ? 'true' : 'false');
+    b.addEventListener('click', () => { target.classList.toggle('on'); sync(); });
+    sync();
+});

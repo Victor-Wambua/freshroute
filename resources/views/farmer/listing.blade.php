@@ -28,7 +28,7 @@
     </div>
     @if($listing->status->next() !== [] && $listing->photos->count() < 4)
         <form method="post" action="{{ route('listings.photos.store', $listing) }}" enctype="multipart/form-data" class="field">@csrf
-            <label for="f-photo">{{ __('ui.add_photo') }}</label><input id="f-photo" type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>
+            <label for="f-photo">{{ __('ui.add_photo') }}</label><input id="f-photo" type="file" name="photo" accept="image/jpeg,image/png,image/webp" data-shrink required>
             <button class="btn sm secondary" type="submit" style="margin-top:8px">{{ __('ui.upload') }}</button></form>
     @endif
 </div>

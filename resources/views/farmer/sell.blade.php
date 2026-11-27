@@ -60,7 +60,7 @@
         @error('price_kes')<div class="err" role="alert">{{ $message }}</div>@enderror
         <x-field name="storage_requirements" :label="__('ui.storage_req')" :hint="__('ui.storage_req_hint')" maxlength="200"/>
         <x-field name="variety" :label="__('ui.variety')" maxlength="60"/>
-        <div class="field"><label for="f-photo"><x-icon name="camera" size="sm"/> {{ __('ui.photo') }}</label><input id="f-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><div class="hint">{{ __('ui.photo_hint') }}</div>@error('photo')<div class="err" role="alert">{{ $message }}</div>@enderror</div>
+        <div class="field"><label for="f-photo"><x-icon name="camera" size="sm"/> {{ __('ui.photo') }}</label><input id="f-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" data-shrink><div class="hint">{{ __('ui.photo_hint') }}</div>@error('photo')<div class="err" role="alert">{{ $message }}</div>@enderror</div>
     </section>
 
     <section class="wiz-step" aria-labelledby="s5">

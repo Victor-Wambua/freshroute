@@ -13,6 +13,7 @@ return [
     'session_expired' => 'Tafadhali ingia tena ili kutuma vitu ulivyohifadhi.',
     'sync_failed' => 'Haijatumwa bado. Tutajaribu tena.',
     'synced' => 'Vitu :n vimetumwa.',
+    'photo_ready' => 'Picha iko tayari kutumwa (KB :kb).',
     'saved_offline' => 'Imehifadhiwa kwenye simu hii. Itatumwa ukiwa mtandaoni.',
     'photo_skipped' => 'Picha hazihifadhiwi nje ya mtandao: ongeza picha baada ya kutumwa.',
     'pick_one' => 'Tafadhali chagua chaguo moja.',
