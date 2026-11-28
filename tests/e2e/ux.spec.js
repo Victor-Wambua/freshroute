@@ -27,3 +27,29 @@ test('mobile prices: the source column is dropped on narrow screens but the lice
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     await context.close();
 });
+
+test('admin: suspending asks for confirmation; wide tables show a scroll hint on phones; compare rows have 44px hit areas', async ({ browser }) => {
+    const { loginCoop } = await import('./helpers.js');
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const page = await ctx.newPage();
+    await loginCoop(page, 'admin@freshroute.test');
+    await page.goto('/admin/users');
+    expect(await page.locator('.tablewrap').evaluate((el) => getComputedStyle(el, '::before').content)).toContain('Swipe sideways');
+    let asked = '';
+    page.once('dialog', (d) => { asked = d.message(); d.dismiss(); });
+    await page.locator('form[data-confirm] button').first().click();
+    expect(asked).toContain('Suspend this account');
+    await expect(page.locator('main')).not.toContainText('Suspended');
+    await ctx.close();
+
+    const c2 = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const p2 = await c2.newPage();
+    await login(p2, 'njeri@freshroute.test');
+    await p2.goto('/market');
+    const box = await p2.locator('label.cmp-row').first().boundingBox();
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    await p2.locator('label.cmp-row').first().click({ position: { x: box.width - 4, y: 4 } });
+    await expect(p2.locator('input.cmp').first()).toBeChecked();
+    await c2.close();
+});
