@@ -14,3 +14,49 @@
 | 8 | Low | Prices | Source URL shown as raw example.invalid text (synthetic) | Kept: honesty label | Not changed |
 
 **Not reviewed / not fixed.** Real low-end device and throttled-network timing; screen reader testing; Swahili copy; print styles; admin and coop screens by eye; the design/prototype was not changed (no drift: only the phone market filter and prices table differ).
+
+## Round 2
+
+**Scope.** Closed the round-1 "not fixed / not reviewed" list and added automated accessibility, keyboard, print, performance and Swahili checks. All new checks are Playwright e2e tests (`tests/e2e/a11y|keyboard|print|perf|photo|i18n.spec.js`, shared screen list in `tests/e2e/pages.js`) and run in CI with the rest of the suite. `axe-core` was added as a dev-only dependency; the tests bypass CSP in the test browser only, the app CSP is unchanged.
+
+### 1. Automated accessibility (axe-core 4, WCAG 2.0/2.1/2.2 A and AA plus best-practice rules)
+69 screens across 7 roles (public, farmer, buyer, storage provider, transporter, coop admin, platform admin), each at 375 and 1280 px, light and dark (276 page views).
+
+| | serious | critical | moderate | minor |
+|---|---|---|---|---|
+| Before | 424 | 8 | 4 | 8 |
+| After | 0 | 0 | 0 | 0 |
+
+Counts are rule violations per page and view. Causes fixed: the header brand link had no accessible name on phones (text was `display:none`); the language button's accessible name did not contain its visible text ("SW"/"EN"); the harvest calendar used grid roles without rows; scrollable table regions were not keyboard-focusable (now `tabindex=0`, `role=region`, labelled, with a visible "Swipe sideways" hint on phones); empty table headers; a skipped heading level on the welcome page; two identically named regions on admin prices.
+
+### 2. Keyboard-only walkthroughs (e2e, `keyboard.spec.js`)
+Tab / Shift+Tab / Enter / Space only. Every farmer and buyer page is tabbed through to the end: no trap, no positive tabindex, no invisible focus stop, a 3 px focus ring on every stop (the native calendar button inside date inputs is browser-drawn and excluded). Also covered: skip link (first stop, moves focus to main), sign-in, the complete 5-step sell wizard including Back, the phone Filter disclosure and the compare checkboxes. The app has no modal dialogs or sheets, so focus trapping and restoring is not applicable.
+
+### 3. Print styles (`print.spec.js`)
+Found: reports printed on a tinted background with filter forms and buttons, and the synthetic-data notice was hidden in print. Now: forced white/black tokens (also from dark mode), app chrome, forms, buttons and pagination hidden, the synthetic notice kept, a print footer with date and the "not production ready / synthetic" statement, tables repeat headers and do not split rows, bars print in grey. Checked on loss report, coop dashboard/members/reports, admin audit/users, compare, listing, prices.
+
+### 4. Remaining roles and screens
+Reviewed admin and coop screens at 375 (light) and 1280 (dark). Fixed: Swahili admin tab bar and long emails widened the phone viewport (515 px); the audit table header "User" was hard-coded English; listing page file input overflowed 29 px. Suspending a user now asks for confirmation (`data-confirm`, external JS, no inline handler); the action is reversible and audited as before.
+
+### 5. Contrast
+Axe measured every rendered text node in both themes: 0 failures. Elements axe cannot resolve (SVG chart text, text over gradients) were checked with `tools/contrast.mjs` token pairs, now including ink and ink-2 on the green and amber tints: 0 failures in light and dark (`design/contrast-results.md` regenerated).
+
+### 6. Round-1 items
+- "Step n of 5" shown above the wizard progress bar (live region, English and Swahili).
+- Compare checkbox rows are 48 px high and the whole label is the hit area (e2e checks size and a corner click).
+- Photo shrink verified with a real generated 2000x1500 PNG of noise, over 4 MB: shrunk in the browser to JPEG under 4 MB and accepted by the server (`photo.spec.js`). It is not proof for every phone camera format (HEIC is not accepted by the app at all).
+
+### 7. Prototype sync
+`design/prototype/`: visible "Step n of 5", 48 px compare rows, print rules, and a persistent "Simulated - design prototype" banner. Still self-contained, no network.
+
+### 8. Performance (`perf.spec.js`, Chromium at 375 px, service worker blocked, no compression on the dev server)
+Every page of the farmer, buyer, coop and admin roles: largest 46 KB uncompressed (admin verify, my-data, coop), 5 requests (document, CSS 20 KB, JS 10 KB, two icons), CLS 0.0000 everywhere. No cheap wins left; budgets of 400 KB, 25 requests, CLS 0.1 are asserted as regression guards. Listings with photos were not in the seed so photo weight is not included.
+
+### 9. Swahili (`i18n.spec.js`)
+Every screen rendered in both languages at 375 px: no raw translation keys, no horizontal overflow (after the fixes above), key parity test already in Pest. Remaining English in Swahili mode: the unit "50 kg bag" (config), the commodity name "Irish potato", and framework validation messages (e.g. "The selected sort is invalid."), plus user data. Shortened the Swahili admin tab "Kumbukumbu ya ukaguzi" to "Ukaguzi" so five tabs fit. **The Swahili text is a machine-assisted draft and has NOT been reviewed by a native speaker; that review is still required.**
+
+### Tests
+Pest 272 passed; Pint and Larastan clean; `composer audit` and `npm audit` clean; Playwright e2e 61 tests (29 existing plus new axe x7, keyboard x6, print x4, perf x4, photo, Swahili x7, admin/compare). Last full run: 59 passed, 1 failed (the coop TOTP test, because another spec had already spent the code; fixed by trying adjacent 30 s steps) and 1 not run; the affected specs were re-run and passed. A second complete run after that fix was not repeated. Screenshots: `docs/screenshots/ux-review/round2-*.png`.
+
+### Still open (cannot be done here)
+Real screen-reader testing (VoiceOver, NVDA, TalkBack); real low-end devices; throttled real-network timing (no emulated throttling was run); Swahili validation messages and unit/commodity names; native Swahili review; photos in performance numbers.
