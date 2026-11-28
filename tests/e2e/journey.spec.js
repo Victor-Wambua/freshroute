@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
-import { login, loginCoop, sellWizard, ymd, totp } from './helpers.js';
+import { login, loginCoop, sellWizard, ymd, totp, submitTotp } from './helpers.js';
 
 // One continuous journey with real browsers against the real app (synthetic seed data):
 // farmer lists (online) -> buyer finds and enquires -> farmer responds -> delivery request -> loss recorded -> report exported.
@@ -195,14 +195,7 @@ test('cooperative admin must pass TOTP, then sees only their members', async ({ 
     await page.fill('#f-code', '000000');
     await page.click('main button[type=submit]');
     await expect(page.locator('.errsum')).toBeVisible();
-    // A code is single-use and other specs sign the same account in with TOTP: try the current, previous and next 30 s step
-    // (all inside the server's +-1 window) so a code already spent by another spec can never make this test flaky.
-    for (const offset of [0, -30000, 30000]) {
-        await page.fill('#f-code', totp('JBSWY3DPEHPK3PXP', Date.now() + offset));
-        await page.click('main button[type=submit]');
-        await page.waitForLoadState();
-        if (!new URL(page.url()).pathname.startsWith('/mfa')) break;
-    }
+    await submitTotp(page, 'JBSWY3DPEHPK3PXP');
     await page.goto('/coop/members');
     await expect(page.locator('table')).toContainText('Wanjiru Kamau');
     await expect(page.locator('table')).not.toContainText('Samuel Kiprono'); // not in this coop

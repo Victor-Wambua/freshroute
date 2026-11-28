@@ -29,11 +29,31 @@ export async function loginCoop(page, email = 'hannah@freshroute.test') {
         return;
     }
     await login(page, email, { fresh: true });
-    // next 30 s step (inside the server's +-1 window) so it is never the same code the MFA test just used (replay is refused)
-    await page.fill('#f-code', totp('JBSWY3DPEHPK3PXP', Date.now() + 30000));
-    await page.click('main button[type=submit]');
-    await page.waitForURL((u) => !u.pathname.startsWith('/mfa'));
+    await submitTotp(page, 'JBSWY3DPEHPK3PXP');
     cache.set(email, await page.context().cookies());
+}
+
+const spent = new Map(); // code -> time until which the server refuses a replay (it remembers codes for 120 s)
+
+/**
+ * Enters a TOTP code on the challenge page. A code works once per account, and several specs sign the same demo account in,
+ * so this picks a step (next, current, previous: all inside the server's +-1 window) whose code this process has not already
+ * used, and if every step is spent it waits for the window to move on. Deterministic, no retries on luck.
+ */
+export async function submitTotp(page, secret) {
+    for (let round = 0; round < 3; round++) {
+        for (const offset of [30000, 0, -30000]) {
+            const code = totp(secret, Date.now() + offset);
+            if ((spent.get(code) || 0) > Date.now()) continue;
+            spent.set(code, Date.now() + 125000);
+            await page.fill('#f-code', code);
+            await page.click('main button[type=submit]');
+            await page.waitForLoadState();
+            if (!new URL(page.url()).pathname.startsWith('/mfa')) return;
+        }
+        await page.waitForTimeout(31000);
+    }
+    throw new Error('no TOTP code was accepted');
 }
 
 export async function logout(page) {

@@ -220,6 +220,8 @@ dl.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}dl.fa
 .brand{min-width:48px}
 
 /* UX review */
+.steps li{min-width:0;overflow-wrap:anywhere}
+@media(max-width:480px){.steps li{font-size:.7rem}}
 input[type=file]{max-width:100%}.tab{min-width:0}.tab span{max-width:100%;overflow-wrap:anywhere;text-align:center}
 @media(max-width:400px){.tab{font-size:.72rem}}
 @media(max-width:600px){.tablewrap::before{content:attr(data-hint);display:block;font-size:.8rem;font-weight:600;color:var(--fr-ink-2);padding:6px 10px;background:var(--fr-surface-2)}}
