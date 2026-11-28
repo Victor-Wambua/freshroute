@@ -10,9 +10,9 @@
     </div>
 </section>
 <div class="grid g3">
-    <div class="card"><x-icon name="box" size="lg"/><h3>{{ __('ui.pitch_sell') }}</h3><p class="muted">{{ __('ui.pitch_sell_b') }}</p></div>
-    <div class="card"><x-icon name="truck" size="lg"/><h3>{{ __('ui.pitch_route') }}</h3><p class="muted">{{ __('ui.pitch_route_b') }}</p></div>
-    <div class="card"><x-icon name="loss" size="lg"/><h3>{{ __('ui.pitch_loss') }}</h3><p class="muted">{{ __('ui.pitch_loss_b') }}</p></div>
+    <div class="card"><x-icon name="box" size="lg"/><h2 class="h3">{{ __('ui.pitch_sell') }}</h2><p class="muted">{{ __('ui.pitch_sell_b') }}</p></div>
+    <div class="card"><x-icon name="truck" size="lg"/><h2 class="h3">{{ __('ui.pitch_route') }}</h2><p class="muted">{{ __('ui.pitch_route_b') }}</p></div>
+    <div class="card"><x-icon name="loss" size="lg"/><h2 class="h3">{{ __('ui.pitch_loss') }}</h2><p class="muted">{{ __('ui.pitch_loss_b') }}</p></div>
 </div>
 <div class="card" style="margin-top:16px">
     <h2>{{ __('ui.nav_prices') }}</h2>

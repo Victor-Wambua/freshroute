@@ -29,7 +29,7 @@
         <div class="row wrap">
             <a class="btn sm grow" href="{{ route('market.show', $l) }}">{{ __('ui.view') }}</a>
             <form method="post" action="{{ route('saved.toggle', $l->user_id) }}">@csrf<button class="btn sm secondary" type="submit" aria-pressed="{{ in_array($l->user_id, $saved) ? 'true' : 'false' }}"><x-icon name="heart" size="sm"/>{{ in_array($l->user_id, $saved) ? __('ui.saved') : __('ui.save_supplier') }}</button></form>
-            <label class="check" style="margin:0"><input class="cmp" type="checkbox" value="{{ $l->id }}"> {{ __('ui.compare') }}</label>
+            <label class="check cmp-row"><input class="cmp" type="checkbox" value="{{ $l->id }}"> {{ __('ui.compare') }}</label>
         </div>
     </article>
 @empty

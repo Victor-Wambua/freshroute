@@ -56,6 +56,8 @@ if (wiz) {
         at = n;
         steps.forEach((s, i) => s.classList.toggle('on', i === n));
         bar.forEach((b, i) => b.classList.toggle('on', i <= n));
+        const count = $('[data-step-count]', wiz);
+        if (count) count.textContent = t('step_of', { n: n + 1, total: steps.length });
         $('[data-back]', wiz).classList.toggle('hide', n === 0);
         $('[data-next]', wiz).classList.toggle('hide', n === steps.length - 1);
         $('[data-submit]', wiz).classList.toggle('hide', n !== steps.length - 1);
@@ -262,6 +264,9 @@ $$('input[type=file][data-shrink]').forEach((input) => input.addEventListener('c
         h.textContent = t('photo_ready', { kb: Math.round(blob.size / 1024) });
     } catch { /* keep the original file */ }
 }));
+
+// Forms marked data-confirm ask before submitting (no inline handlers)
+$$('form[data-confirm]').forEach((f) => f.addEventListener('submit', (e) => { if (!window.confirm(f.dataset.confirm)) e.preventDefault(); }));
 
 // Market filters are collapsed on phones only (CSS keeps them visible without JS and on wide screens)
 $$('[data-toggle]').forEach((b) => {

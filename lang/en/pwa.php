@@ -2,6 +2,7 @@
 
 return [
     'offline' => 'Offline',
+    'step_of' => 'Step :n of :total',
     'waiting' => ':n waiting to send',
     'rejected' => ':n could not be saved and need checking.',
     'rejected_one' => 'Needs checking',

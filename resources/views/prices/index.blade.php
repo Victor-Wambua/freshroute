@@ -24,7 +24,7 @@
         <div class="card" style="margin-bottom:16px"><h2>{{ __('ui.history_12w') }} - {{ $market }}</h2>
             <x-price-chart :series="$series->map(fn($p) => ['label' => $p->collected_on->format('j M'), 'value' => $p->price_minor])->all()" :title="__('ui.history_12w').' - '.$market"/></div>
         <h2>{{ __('ui.all_markets') }}</h2>
-        <div class="tablewrap"><table><thead><tr><th scope="col">{{ __('ui.market') }}</th><th scope="col" class="numcol">{{ __('ui.price') }}</th><th scope="col">{{ __('ui.collected') }}</th><th scope="col" class="hide-sm">{{ __('ui.source') }}</th><th scope="col">{{ __('ui.licence') }}</th></tr></thead><tbody>
+        <div class="tablewrap" data-hint="{{ __('ui.scroll_hint') }}" tabindex="0" role="region" aria-label="{{ __('ui.table_region') }}"><table><thead><tr><th scope="col">{{ __('ui.market') }}</th><th scope="col" class="numcol">{{ __('ui.price') }}</th><th scope="col">{{ __('ui.collected') }}</th><th scope="col" class="hide-sm">{{ __('ui.source') }}</th><th scope="col">{{ __('ui.licence') }}</th></tr></thead><tbody>
         @foreach($latest as $m => $p)<tr><th scope="row">{{ $m }}</th><td class="numcol">{{ \App\Support\Money::kes($p->price_minor) }}</td><td>{{ $p->collected_on->toDateString() }}</td><td class="hide-sm">{{ $p->source->name }}</td><td>{{ __('ui.licence_'.$p->licence_status) }}</td></tr>@endforeach
         </tbody></table></div>
     @else
@@ -33,7 +33,7 @@
 @else
     <div class="banner user"><x-icon name="warn" size="sm"/><span>{{ __('ui.user_explain') }}</span></div>
     @if($userMedian)<p><strong>{{ __('ui.user_median') }}:</strong> {{ \App\Support\Money::kes($userMedian) }} <span class="badge b-user">{{ __('ui.origin_user') }}</span> <span class="small muted">{{ __('ui.not_official_avg') }}</span></p>@endif
-    <div class="tablewrap"><table><thead><tr><th scope="col">{{ __('ui.market') }}</th><th scope="col" class="numcol">{{ __('ui.price') }}</th><th scope="col">{{ __('ui.observed') }}</th><th scope="col">{{ __('ui.note') }}</th><th scope="col">{{ __('ui.origin') }}</th></tr></thead><tbody>
+    <div class="tablewrap" data-hint="{{ __('ui.scroll_hint') }}" tabindex="0" role="region" aria-label="{{ __('ui.table_region') }}"><table><thead><tr><th scope="col">{{ __('ui.market') }}</th><th scope="col" class="numcol">{{ __('ui.price') }}</th><th scope="col">{{ __('ui.observed') }}</th><th scope="col">{{ __('ui.note') }}</th><th scope="col">{{ __('ui.origin') }}</th></tr></thead><tbody>
     @forelse($userRows as $r)<tr><th scope="row">{{ $r->market }}</th><td class="numcol">{{ \App\Support\Money::kes($r->price_minor) }}</td><td>{{ $r->observed_on->toDateString() }}</td><td>{{ $r->note }}</td><td><x-origin :origin="$r->origin"/></td></tr>
     @empty<tr><td colspan="5" class="muted">{{ __('ui.no_user_prices') }}</td></tr>@endforelse
     </tbody></table></div>

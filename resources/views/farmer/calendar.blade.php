@@ -12,11 +12,11 @@
     <strong>{{ $month->translatedFormat('F Y') }}</strong>
     <a class="btn sm secondary" href="{{ route('calendar.index', ['m' => $month->copy()->addMonth()->format('Y-m')]) }}">&rarr;</a>
 </div>
-<div class="cal" role="grid" aria-label="{{ $month->translatedFormat('F Y') }}">
-    @foreach(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as $d)<div class="hd" role="columnheader">{{ $d }}</div>@endforeach
+<div class="cal" role="group" aria-label="{{ $month->translatedFormat('F Y') }}">
+    @foreach(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as $d)<div class="hd">{{ $d }}</div>@endforeach
     @for($i = 0; $i < $lead; $i++)<div class="mt" aria-hidden="true"></div>@endfor
     @for($d = 1; $d <= $days; $d++)
-        <div role="gridcell" class="{{ $byDay->has($d) ? 'ev' : '' }} {{ $first->copy()->day($d)->isToday() ? 'today' : '' }}">{{ $d }}@if($byDay->has($d))<span class="sr"> {{ __('ui.harvest_day') }}</span>@endif</div>
+        <div class="{{ $byDay->has($d) ? 'ev' : '' }} {{ $first->copy()->day($d)->isToday() ? 'today' : '' }}">{{ $d }}@if($byDay->has($d))<span class="sr"> {{ __('ui.harvest_day') }}</span>@endif</div>
     @endfor
 </div>
 <h2 style="margin-top:24px">{{ __('ui.upcoming') }}</h2>

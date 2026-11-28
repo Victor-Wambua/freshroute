@@ -3,6 +3,7 @@
 // DRAFT Swahili: needs native-speaker review before any pilot.
 return [
     'offline' => 'Nje ya mtandao',
+    'step_of' => 'Hatua :n kati ya :total',
     'waiting' => ':n zinasubiri kutumwa',
     'rejected' => ':n hazikuhifadhiwa na zinahitaji kukaguliwa.',
     'rejected_one' => 'Inahitaji kukaguliwa',

@@ -3,7 +3,7 @@
 // DRAFT Swahili. Written without a native-speaker review: it MUST be reviewed before any pilot use.
 return [
     'tagline' => 'Uratibu wa soko la mazao',
-    'skip' => 'Ruka hadi maudhui', 'main_nav' => 'Menyu kuu', 'switch_lang' => 'Badili lugha (English / Kiswahili)', 'toggle_theme' => 'Badili mwonekano wa mwanga au giza',
+    'skip' => 'Ruka hadi maudhui', 'main_nav' => 'Menyu kuu', 'switch_lang' => 'Badili lugha (English / Kiswahili)', 'print_foot' => 'FreshRoute, imechapishwa :date. Bado si ya matumizi halisi; data ya majaribio ni ya kubuni isipokuwa safu inaposema vinginevyo.', 'scroll_hint' => 'Telezesha pembeni kuona safu zote.', 'suspend_confirm' => 'Simamisha akaunti hii? Unaweza kubatilisha baadaye.', 'actor' => 'Mtumiaji', 'table_region' => 'Jedwali (telezesha pembeni kwenye skrini ndogo)', 'toggle_theme' => 'Badili mwonekano wa mwanga au giza',
     'sign_in' => 'Ingia', 'sign_out' => 'Toka', 'create_account' => 'Fungua akaunti',
     'synthetic_note' => 'Data ya maonyesho (bandia). Majina, kiasi na bei ni za kubuni isipokuwa rekodi ikisema vinginevyo.',
     'no_money' => 'FreshRoute haishikilii, haiweki wala kutuma pesa. Malipo hukubaliwa moja kwa moja kati ya wahusika.',
@@ -14,7 +14,7 @@ return [
     'nav_enquiries' => 'Maswali', 'nav_deliveries' => 'Usafirishaji', 'nav_storage' => 'Hifadhi', 'nav_transport' => 'Usafiri', 'nav_prices' => 'Bei',
     'nav_farm' => 'Wasifu wa shamba', 'nav_alerts' => 'Arifa', 'nav_mydata' => 'Data yangu', 'nav_market' => 'Soko', 'nav_saved' => 'Zilizohifadhiwa', 'nav_needs' => 'Mahitaji yangu',
     'nav_my_storage' => 'Hifadhi yangu', 'nav_requests' => 'Maombi', 'nav_my_vehicle' => 'Gari langu', 'nav_overview' => 'Muhtasari', 'nav_members' => 'Wanachama',
-    'nav_reports' => 'Ripoti', 'nav_security' => 'Usalama', 'nav_users' => 'Watumiaji', 'nav_audit' => 'Kumbukumbu ya ukaguzi', 'nav_verify' => 'Uthibitisho', 'nav_deletions' => 'Ufutaji', 'nav_price_view' => 'Ukurasa wa bei',
+    'nav_reports' => 'Ripoti', 'nav_security' => 'Usalama', 'nav_users' => 'Watumiaji', 'nav_audit' => 'Ukaguzi', 'nav_verify' => 'Uthibitisho', 'nav_deletions' => 'Ufutaji', 'nav_price_view' => 'Ukurasa wa bei',
 
     'role' => 'Jukumu', 'role_farmer' => 'Mkulima', 'role_coop_admin' => 'Msimamizi wa ushirika', 'role_buyer' => 'Mnunuzi', 'role_storage_provider' => 'Mtoa hifadhi', 'role_transporter' => 'Msafirishaji', 'role_platform_admin' => 'Msimamizi wa jukwaa',
     'role_farmer_d' => 'Ninalima viazi na ninataka kuuza', 'role_buyer_d' => 'Ninanunua mazao: mfanyabiashara, hoteli, kiwanda', 'role_coop_admin_d' => 'Ninasimamia ushirika wa wakulima',

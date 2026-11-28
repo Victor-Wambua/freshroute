@@ -21,7 +21,7 @@
     <p class="hint">{{ __('ui.share_note') }}</p>
 </div>
 <h2>{{ __('ui.by_commodity') }}</h2>
-<div class="tablewrap"><table><thead><tr><th scope="col">{{ __('ui.commodity') }}</th><th scope="col">{{ __('ui.stage') }}</th><th scope="col">{{ __('ui.loss_kind') }}</th><th scope="col">{{ __('ui.reason') }}</th><th scope="col" class="numcol">{{ __('ui.bags') }}</th></tr></thead><tbody>
+<div class="tablewrap" data-hint="{{ __('ui.scroll_hint') }}" tabindex="0" role="region" aria-label="{{ __('ui.table_region') }}"><table><thead><tr><th scope="col">{{ __('ui.commodity') }}</th><th scope="col">{{ __('ui.stage') }}</th><th scope="col">{{ __('ui.loss_kind') }}</th><th scope="col">{{ __('ui.reason') }}</th><th scope="col" class="numcol">{{ __('ui.bags') }}</th></tr></thead><tbody>
 @forelse($report['detail'] as $r)
 <tr><td>{{ $r['commodity'] }}</td><td>{{ __('ui.stage_'.$r['stage']) }}</td><td>{{ __('ui.cat_'.$r['category']) }}</td><td>{{ __('ui.reason_'.$r['reason']) }}</td><td class="numcol">{{ $r['bags'] }}</td></tr>
 @empty<tr><td colspan="5" class="muted">{{ __('ui.no_losses') }}</td></tr>@endforelse

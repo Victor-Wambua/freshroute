@@ -3,7 +3,7 @@
 return [
     // chrome
     'tagline' => 'Produce market coordination',
-    'skip' => 'Skip to content', 'main_nav' => 'Main navigation', 'switch_lang' => 'Switch language (English / Kiswahili)', 'toggle_theme' => 'Switch light or dark theme',
+    'skip' => 'Skip to content', 'main_nav' => 'Main navigation', 'switch_lang' => 'Switch language (English / Kiswahili)', 'print_foot' => 'FreshRoute, printed :date. Not production ready; demo data is synthetic unless a row says otherwise.', 'scroll_hint' => 'Swipe sideways to see all columns.', 'suspend_confirm' => 'Suspend this account? You can undo this later.', 'actor' => 'User', 'table_region' => 'Table (scrolls sideways on small screens)', 'toggle_theme' => 'Switch light or dark theme',
     'sign_in' => 'Sign in', 'sign_out' => 'Sign out', 'create_account' => 'Create account',
     'synthetic_note' => 'Synthetic demonstration data. Names, quantities and prices are invented unless a record says otherwise.',
     'no_money' => 'FreshRoute does not hold, escrow or move money. Payment is agreed directly between the people involved.',

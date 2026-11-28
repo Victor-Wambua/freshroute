@@ -7,6 +7,7 @@
 <form method="post" action="{{ route('listings.store') }}" enctype="multipart/form-data" data-wizard data-offline="listing" novalidate>
     @csrf
     <input type="hidden" name="client_uuid" value="{{ (string) \Illuminate\Support\Str::uuid() }}">
+    <p class="step-count" data-step-count role="status" aria-live="polite">{{ __('pwa.step_of', ['n' => 1, 'total' => 5]) }}</p>
     <div class="progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
     <section class="wiz-step on" aria-labelledby="s1">

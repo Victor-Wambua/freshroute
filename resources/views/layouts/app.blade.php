@@ -23,7 +23,7 @@
     <a class="brand" href="{{ $u ? route('home') : route('welcome') }}"><svg aria-hidden="true"><use href="#i-logo"/></svg><span>FreshRoute</span></a>
     <div class="bar-actions">
         <span id="net-pill" class="pill hide" role="status" aria-live="polite"></span>
-        <a class="iconbtn langbtn" href="{{ route('locale', app()->getLocale() === 'en' ? 'sw' : 'en') }}" lang="{{ app()->getLocale() === 'en' ? 'sw' : 'en' }}" aria-label="{{ __('ui.switch_lang') }}"><x-icon name="globe" size="sm"/>{{ app()->getLocale() === 'en' ? 'SW' : 'EN' }}</a>
+        <a class="iconbtn langbtn" href="{{ route('locale', app()->getLocale() === 'en' ? 'sw' : 'en') }}" lang="{{ app()->getLocale() === 'en' ? 'sw' : 'en' }}" aria-label="{{ app()->getLocale() === 'en' ? 'SW' : 'EN' }}: {{ __('ui.switch_lang') }}"><x-icon name="globe" size="sm"/>{{ app()->getLocale() === 'en' ? 'SW' : 'EN' }}</a>
         <button type="button" class="iconbtn" id="theme-btn" aria-label="{{ __('ui.toggle_theme') }}"><x-icon name="moon" size="sm"/></button>
         @if($u)
         <a class="iconbtn" href="{{ route('alerts.index') }}" aria-label="{{ __('ui.nav_alerts') }}{{ $unread ? ' ('.$unread.')' : '' }}"><x-icon name="bell"/>@if($unread)<span class="dot"></span>@endif</a>
@@ -53,6 +53,7 @@
     @if(session('status'))<div class="banner ok flash" role="status"><x-icon name="check" size="sm"/>{{ session('status') }}</div>@endif
     <div id="queue-banner" class="banner off hide" role="status"></div>
     @yield('content')
+    <p class="print-foot">{{ __('ui.print_foot', ['date' => now()->toDateString()]) }}</p>
 </main>
 @if($u)
 <nav class="tabbar" aria-label="{{ __('ui.main_nav') }}">
