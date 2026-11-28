@@ -108,3 +108,8 @@ dialog::backdrop{background:rgba(26,19,13,.6)}
 main:focus{outline:none}.brand span{white-space:nowrap}
 @media(max-width:480px){.top .brand span{display:none}.top{padding:8px}.bar-actions{gap:4px}.iconbtn{min-width:46px}}
 .b-neutral{color:var(--fr-ink);background:var(--fr-surface-2)}
+
+/* UX review round 2 (mirrors the app) */
+.step-count{font-weight:700;color:var(--fr-ink-2);margin:0 0 6px}
+.cmp-row{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 6px;cursor:pointer;margin:0}
+@media print{:root,:root[data-theme="dark"]{--fr-bg:#fff;--fr-surface:#fff;--fr-surface-2:#eee;--fr-ink:#000;--fr-ink-2:#333;--fr-line:#999}body{background:#fff;color:#000}.top,.side,.tabbar,.btn,#toast{display:none!important}}
